@@ -30,7 +30,7 @@ class Server(object):
             self.socket.close()
 
             for connection in self.connections:
-                connection.stop()
+                connection.stop.set()
                 connection.join()
 
             print '[*] Bye bye!'

@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Event
 
 class Connection(Thread):
     def __init__(self, socket, address):
@@ -7,19 +7,20 @@ class Connection(Thread):
         self.socket = socket
         self.address = address
 
-        self.should_run = True
+        self.stop = Event()
 
         print '[+]', self.address[0] + ':' + str(self.address[1]), 'has connected'
 
     def run(self):
-        while self.should_run:
-            pass
+        while True:
+            should_stop = self.stop.wait(0.0001) # TODO: move into a constant
+
+            if should_stop:
+                break
+
             # actual client handling function
         
         # should clean itself from Server connections list
 
         self.socket.close()
         print '[-]', self.address[0] + ':' + str(self.address[1]), 'has disconnected'
-
-    def stop(self):
-        self.should_run = False
