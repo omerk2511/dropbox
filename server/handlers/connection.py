@@ -5,11 +5,11 @@ class Connection(Thread):
         Thread.__init__(self)
 
         self.socket = socket
-        self.address = address
+        self.address = address[0] + ':' + str(address[1])
 
         self.stop = Event()
 
-        print '[+]', self.address[0] + ':' + str(self.address[1]), 'has connected'
+        print '[+]', self.address, 'has connected'
 
     def run(self):
         while True:
@@ -23,4 +23,4 @@ class Connection(Thread):
         # should clean itself from Server connections list
 
         self.socket.close()
-        print '[-]', self.address[0] + ':' + str(self.address[1]), 'has disconnected'
+        print '[-]', self.address, 'has disconnected'
