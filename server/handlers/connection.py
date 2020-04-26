@@ -1,6 +1,6 @@
 from threading import Thread, Event
 
-from ..common.message import Message
+from common.message import Message
 
 # TODO: find an appropriate place for these constants
 BUFFER_SIZE = 4096
@@ -40,8 +40,12 @@ class Connection(Thread):
                 continue
 
             data = data.strip()
-            message = Message.deserialize(data)
-            print '[*]', message
+            
+            try:
+                message = Message.deserialize(data)
+                print '[*]', message
+            except:
+                pass # send a format error
 
         # should clean itself from Server connections list
 
