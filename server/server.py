@@ -1,4 +1,4 @@
-from handlers.server import Server
+from handlers import Server
 
 HOST = ''
 PORT = 8000

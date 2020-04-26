@@ -4,6 +4,8 @@ from connection import Connection
 
 class Server(object):
     def __init__(self, host, port):
+        print '[*] Hello there!'
+
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -27,10 +29,10 @@ class Server(object):
                 except socket.timeout:
                     continue
         except KeyboardInterrupt:
-            self.socket.close()
-
             for connection in self.connections:
                 connection.stop.set()
                 connection.join()
+
+            self.socket.close()
 
             print '[*] Bye bye!'

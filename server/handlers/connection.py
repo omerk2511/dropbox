@@ -1,5 +1,11 @@
 from threading import Thread, Event
 
+from ..common.message import Message
+
+# TODO: find an appropriate place for these constants
+BUFFER_SIZE = 4096
+EVENT_TIMEOUT = 0.00000001
+
 class Connection(Thread):
     def __init__(self, socket, address):
         Thread.__init__(self)
@@ -13,13 +19,30 @@ class Connection(Thread):
 
     def run(self):
         while True:
-            should_stop = self.stop.wait(0.0001) # TODO: move into a constant
+            should_stop = self.stop.wait(EVENT_TIMEOUT)
 
             if should_stop:
                 break
 
-            # actual client handling function
-        
+            try:
+                data = self.socket.recv(BUFFER_SIZE)
+
+                if not data:
+                    break
+
+                if len(data) == BUFFER_SIZE:
+                    while True:
+                        try:
+                            data += self.socket.recv(BUFFER_SIZE)
+                        except:
+                            break
+            except:
+                continue
+
+            data = data.strip()
+            message = Message.deserialize(data)
+            print '[*]', message
+
         # should clean itself from Server connections list
 
         self.socket.close()
