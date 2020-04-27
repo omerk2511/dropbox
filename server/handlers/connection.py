@@ -21,31 +21,38 @@ class Connection(Thread):
 
     def run(self):
         while True:
-            should_stop = self.stop.wait(EVENT_TIMEOUT)
+            should_stop = self.iteration()
 
             if should_stop:
                 break
-
-            try:
-                data = self.get_data()
-
-                if not data:
-                    break
-            except:
-                continue
-            
-            try:
-                message = Message.deserialize(data)
-                print '[*]', message
-
-                self.handle_message(message)
-            except:
-                self.send_bad_request()
 
         # should clean itself from Server connections list
 
         self.socket.close()
         print '[-]', self.address, 'has disconnected'
+
+    def iteration(self):
+        should_stop = self.stop.wait(EVENT_TIMEOUT)
+
+        if should_stop:
+            return True
+
+        try:
+            data = self.get_data()
+
+            if not data:
+                return True
+
+            message = Message.deserialize(data)
+            print '[*]', message
+
+            self.handle_message(message)
+        except socket.timeout:
+            pass
+        except:
+            self.send_bad_request()
+
+        return False
 
     def handle_message(self, message):
         try:
