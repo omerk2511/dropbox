@@ -1,10 +1,10 @@
 from common import Codes, Message
-from ..handlers.handler import handler
+from controller import controller
 
-@handler
+@controller
 def log_in(payload):
     return Message(Codes.LOG_IN, { 'status': 'success' })
 
-@handler
+@controller
 def create_user(payload):
     return Message(Codes.CREATE_USER, { 'status': 'success' })

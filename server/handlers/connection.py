@@ -1,7 +1,8 @@
+import socket
+
 from threading import Thread, Event
 
 from common import Codes, Message
-from handler import get_handler_func
 from ..controllers import *
 
 # TODO: find an appropriate place for these constants
@@ -47,7 +48,7 @@ class Connection(Thread):
             print '[*]', message
 
             self.handle_message(message)
-        except socket.timeout:
+        except socket.error:
             pass
         except:
             self.send_bad_request()
@@ -56,7 +57,7 @@ class Connection(Thread):
 
     def handle_message(self, message):
         try:
-            response = get_handler_func(message.code)(message.payload)
+            response = get_controller_func(message.code)(message.payload)
             self.send_message(response)
         except:
             self.send_bad_request(message)
