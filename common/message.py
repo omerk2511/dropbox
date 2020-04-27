@@ -21,4 +21,4 @@ class Message(object):
         return cls(message['code'], message['payload'])
 
     def __str__(self):
-        return 'code = ' + self.code + ', payload = ' + str(self.payload)
+        return 'code = ' + str(self.code) + ', payload = ' + str(self.payload)

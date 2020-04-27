@@ -1,4 +1,10 @@
 class Codes(object):
+    BAD_REQUEST = 'bad_request'
+    UNAUTHORIZED = 'unauthorized'
+    FORBIDDEN = 'forbidden'
+    NOT_FOUND = 'not_found'
+    SERVER_ERROR = 'server_error'
+
     LOG_IN = 'log_in'
 
     CREATE_USER = 'create_user'

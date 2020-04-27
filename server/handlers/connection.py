@@ -1,6 +1,8 @@
 from threading import Thread, Event
 
-from common.message import Message
+from common import Codes, Message
+from handler import get_handler_func
+from ..controllers import *
 
 # TODO: find an appropriate place for these constants
 BUFFER_SIZE = 4096
@@ -25,29 +27,55 @@ class Connection(Thread):
                 break
 
             try:
-                data = self.socket.recv(BUFFER_SIZE)
+                data = self.get_data()
 
                 if not data:
                     break
-
-                if len(data) == BUFFER_SIZE:
-                    while True:
-                        try:
-                            data += self.socket.recv(BUFFER_SIZE)
-                        except:
-                            break
             except:
                 continue
-
-            data = data.strip()
             
             try:
                 message = Message.deserialize(data)
                 print '[*]', message
+
+                self.handle_message(message)
             except:
-                pass # send a format error
+                self.send_bad_request()
 
         # should clean itself from Server connections list
 
         self.socket.close()
         print '[-]', self.address, 'has disconnected'
+
+    def handle_message(self, message):
+        try:
+            response = get_handler_func(message.code)(message.payload)
+            self.send_message(response)
+        except:
+            self.send_bad_request(message)
+
+    def send_bad_request(self):
+        self.send_message(
+            Message(
+                Codes.BAD_REQUEST,
+                { 'message': 'The server could not understand the request.' }
+            )
+        )
+
+    def send_message(self, message):
+        self.socket.send(message.serialize())
+
+    def get_data(self):
+        data = self.socket.recv(BUFFER_SIZE)
+
+        if not data:
+            return None
+
+        if len(data) == BUFFER_SIZE:
+            while True:
+                try:
+                    data += self.socket.recv(BUFFER_SIZE)
+                except:
+                    break
+        
+        return data
