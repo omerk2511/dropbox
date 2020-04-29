@@ -1,11 +1,19 @@
 # dropbox
 A Dropbox clone written in Python for my 11th grade final project in Cyber class.
 
+# Running
+
+In order to run the server, type in:
+`$ python -m server.server`
+
+And for the client, just write:
+`$ python -m client.client`
+
 ## Features
 - [ ] Graphical Client
-- [ ] Multithreaded Server
-- [ ] JSON Based Protocol
-- [ ] User Management
+- [x] Multithreaded Server
+- [x] JSON Based Protocol
+- [x] User Management
 - [ ] File Management
 - [ ] Permission Management
 - [ ] Group Management

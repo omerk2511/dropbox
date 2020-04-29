@@ -138,3 +138,9 @@ dmypy.json
 
 # Local History for Visual Studio Code
 .history/
+
+# Server Data
+server/data/
+
+# Internal Configuration Files
+config.py
