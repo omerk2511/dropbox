@@ -7,8 +7,18 @@ def is_payload_valid(payload, rules):
         return False
 
     for rule in rules:
-        if rule[0] not in payload or type(payload[rule[0]]) not in rule[1]:
-            return False
+        if type(rule) == list:
+            count = 0
+
+            for nested_rule in rule:
+                count += 1 if (nested_rule[0] in payload and type(
+                    payload[nested_rule[0]]) in nested_rule[1]) else 0
+
+            if count == 0:
+                return False
+        else:
+            if rule[0] not in payload or type(payload[rule[0]]) not in rule[1]:
+                return False
 
     return True
 

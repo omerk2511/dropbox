@@ -17,6 +17,13 @@ class Groups(object):
         )
 
     @staticmethod
+    def get(group_id):
+        return database.fetch(
+            'SELECT * FROM groups WHERE id = ?',
+            (group_id,)
+        )
+
+    @staticmethod
     def create(name, owner):
         return database.execute(
             'INSERT INTO groups (name, owner) VALUES (?, ?)',
@@ -41,5 +48,5 @@ class Groups(object):
     def delete(group_id):
         database.execute(
             'DELETE FROM groups WHERE id = ?',
-            (group_id)
+            (group_id,)
         )

@@ -37,3 +37,42 @@ def create_group(payload, user):
             Codes.BAD_REQUEST,
             { 'message': 'The requesting user has been deleted.' }
         )
+
+UPDATE_GROUP_PAYLOAD = [
+    ('group', [int]),
+    [
+        ('name', [str, unicode]),
+        ('owner', [int])
+    ]
+]
+
+@controller(Codes.UPDATE_GROUP)
+@authenticated
+@validator(UPDATE_GROUP_PAYLOAD)
+def update_group(payload, user):
+    groups = Groups.get(payload['group'])
+
+    if not groups:
+        return Message(
+            Codes.NOT_FOUND,
+            { 'message': 'A group with this id was not found.' }
+        )
+
+    owner = groups[0][2]
+
+    if user['id'] != owner:
+        return Message(
+            Codes.FORBIDDEN,
+            { 'message': 'You have to be a group\'s owner in order to update it.' }
+        )
+
+    if 'name' in payload:
+        Groups.update_name(payload['group'], payload['name'])
+
+    if 'owner' in payload:
+        Groups.update_owner(payload['group'], payload['owner'])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'The group has been successfully updated.' }
+    )
