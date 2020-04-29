@@ -1,13 +1,11 @@
 # dropbox
 A Dropbox clone written in Python for my 11th grade final project in Cyber class.
 
-# Running
+## Running
 
-In order to run the server, type in:
-`$ python -m server.server`
+In order to run the server, type in: `python -m server.server`
 
-And for the client, just write:
-`$ python -m client.client`
+And for the client, just write: `python -m client.client`
 
 ## Features
 - [ ] Graphical Client
