@@ -10,6 +10,7 @@ class Groups(object):
             CREATE TABLE IF NOT EXISTS groups (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name CHAR(255) NOT NULL,
+                owner INTEGER,
                 FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE
             )
             '''
