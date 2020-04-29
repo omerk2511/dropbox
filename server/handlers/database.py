@@ -1,7 +1,7 @@
 import sqlite3 as lite
 from threading import Lock
 
-DATABASE_PATH = 'server\\data\\database.db'
+from ..config import DATABASE_PATH
 
 class Database(object):
     def __init__(self):

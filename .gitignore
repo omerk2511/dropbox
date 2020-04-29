@@ -141,3 +141,6 @@ dmypy.json
 
 # Server Data
 server/data/
+
+# Internal Configuration Files
+config.py

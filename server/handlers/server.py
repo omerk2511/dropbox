@@ -35,6 +35,5 @@ class Server(object):
                 connection.join()
 
             self.socket.close()
-            database.close()
 
             print '[*] Bye bye!'
