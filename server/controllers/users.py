@@ -14,7 +14,7 @@ def is_payload_valid(payload, rules):
 
     return True
 
-@controller
+@controller(Codes.LOG_IN)
 def log_in(payload):
     rules = [
         ('username', [str, unicode]),
@@ -43,7 +43,7 @@ def log_in(payload):
             { 'message': 'The credentials you have provided are invalid.' }
         )
 
-@controller
+@controller(Codes.CREATE_USER)
 def create_user(payload):
     rules = [
         ('username', [str, unicode]),

@@ -63,7 +63,7 @@ class Connection(Thread):
                 response = get_controller_func(message.code)(message.payload)
                 self.send_message(response)
             else:
-                self.send_bad_request(message)
+                self.send_bad_request()
         except Exception as e:
                 print '[-]', e
                 self.send_server_error()
