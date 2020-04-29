@@ -18,7 +18,7 @@ class Groups(object):
 
     @staticmethod
     def create(name, owner):
-        database.execute(
+        return database.execute(
             'INSERT INTO groups (name, owner) VALUES (?, ?)',
             (name, owner)
         )

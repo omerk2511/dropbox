@@ -15,11 +15,22 @@ CREATE_GROUP_PAYLOAD = [
 @validator(CREATE_GROUP_PAYLOAD)
 def create_group(payload, user):
     try:
-        Groups.create(payload['name'], user['id'])
+        group_id = Groups.create(payload['name'], user['id'])
 
         return Message(
             Codes.SUCCESS,
-            { 'message': 'A group was created successfully!' }
+            {
+                'message': 'A group was created successfully!',
+                'group': {
+                    'id': group_id,
+                    'name': payload['name'],
+                    'owner': {
+                        'id': user['id'],
+                        'username': user['username'],
+                        'full_name': user['full_name']
+                    }
+                }
+            }
         )
     except lite.IntegrityError:
         return Message(
