@@ -1,4 +1,5 @@
 import jwt
+import hashlib
 
 from ..config import JWT_SECRET_KEY
 from ..handlers.database import database
@@ -21,14 +22,14 @@ class Users(object):
     def create(username, full_name, password):
         database.execute(
             'INSERT INTO users (username, full_name, password) VALUES (?, ?, ?)',
-            (username, full_name, password)
+            (username, full_name, hashlib.sha256(password).hexdigest())
         )
 
     @staticmethod
     def log_in(username, password):
         users = database.fetch(
             'SELECT * FROM users WHERE username = ? AND password = ?',
-            (username, password)
+            (username, hashlib.sha256(password).hexdigest())
         )
 
         if users:
