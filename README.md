@@ -11,9 +11,9 @@ And for the client, just write:
 
 ## Features
 - [ ] Graphical Client
-- [ ] Multithreaded Server
-- [ ] JSON Based Protocol
-- [ ] User Management
+- [x] Multithreaded Server
+- [x] JSON Based Protocol
+- [x] User Management
 - [ ] File Management
 - [ ] Permission Management
 - [ ] Group Management
