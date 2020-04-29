@@ -2,31 +2,14 @@ import sqlite3 as lite
 
 from common import Codes, Message
 from controller import controller
+from validator import validator
 from ..models import Users
 
-def is_payload_valid(payload, rules):
-    if type(payload) != dict:
-        return False
-
-    for rule in rules:
-        if rule[0] not in payload or type(payload[rule[0]]) not in rule[1]:
-            return False
-
-    return True
-
 @controller(Codes.LOG_IN)
+@validator([
+    ('username', [str, unicode]),
+    ('password', [str, unicode])])
 def log_in(payload):
-    rules = [
-        ('username', [str, unicode]),
-        ('password', [str, unicode])
-    ]
-
-    if not is_payload_valid(payload, rules):
-        return Message(
-            Codes.BAD_REQUEST,
-            { 'message': 'A username and a password should be provided.' }
-        )
-
     token = Users.log_in(**payload)
 
     if token:
@@ -44,19 +27,11 @@ def log_in(payload):
         )
 
 @controller(Codes.CREATE_USER)
+@validator([
+    ('username', [str, unicode]),
+    ('full_name', [str, unicode]),
+    ('password', [str, unicode])])
 def create_user(payload):
-    rules = [
-        ('username', [str, unicode]),
-        ('full_name', [str, unicode]),
-        ('password', [str, unicode])
-    ]
-
-    if not is_payload_valid(payload, rules):
-        return Message(
-            Codes.BAD_REQUEST,
-            { 'message': 'A username, a full name, and a password should be provided.' }
-        )
-
     try:
         Users.create(**payload)
 
