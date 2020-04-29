@@ -1,11 +1,13 @@
 import jwt
 import hashlib
 
+from initialization import initializer
 from ..config import JWT_SECRET_KEY
 from ..handlers.database import database
 
 class Users(object):
     @staticmethod
+    @initializer
     def initialize():
         database.execute(
             '''

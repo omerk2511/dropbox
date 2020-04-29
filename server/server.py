@@ -1,11 +1,11 @@
 from handlers import Server
-from models import *
+from models import initialize_models
 
 HOST = ''
 PORT = 8000
 
 def main():
-    Users.initialize()
+    initialize_models()
 
     server = Server(HOST, PORT)
     server.run()
