@@ -20,7 +20,7 @@ def create_group(payload, user):
         return Message(
             Codes.SUCCESS,
             {
-                'message': 'A group was created successfully!',
+                'message': 'A group has been created successfully.',
                 'group': {
                     'id': group_id,
                     'name': payload['name'],
@@ -74,5 +74,36 @@ def update_group(payload, user):
 
     return Message(
         Codes.SUCCESS,
-        { 'message': 'The group has been successfully updated.' }
+        { 'message': 'The group has been updated successfully.' }
+    )
+
+DELETE_GROUP_PAYLOAD = [
+    ('group', [int])
+]
+
+@controller(Codes.DELETE_GROUP)
+@authenticated
+@validator(DELETE_GROUP_PAYLOAD)
+def delete_group(payload, user):
+    groups = Groups.get(payload['group'])
+
+    if not groups:
+        return Message(
+            Codes.NOT_FOUND,
+            { 'message': 'A group with this id was not found.' }
+        )
+
+    owner = groups[0][2]
+
+    if user['id'] != owner:
+        return Message(
+            Codes.FORBIDDEN,
+            { 'message': 'You have to be a group\'s owner in order to update it.' }
+        )
+
+    Groups.delete(payload['group']) # also delete files later
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'The group has been deleted successfully.' }
     )
