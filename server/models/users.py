@@ -13,7 +13,7 @@ class Users(object):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username CHAR(255) UNIQUE NOT NULL,
                 full_name CHAR(255) NOT NULL,
-                password CHAR(255) NOT NULL
+                password CHAR(64) NOT NULL
             )
             '''
         )
