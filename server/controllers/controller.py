@@ -8,4 +8,4 @@ def get_controller_func(controller):
     if controller in CONTROLLERS:
         return CONTROLLERS[controller]
 
-    raise Exception('Invalid controller.')
+    return None

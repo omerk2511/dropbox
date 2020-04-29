@@ -57,10 +57,24 @@ class Connection(Thread):
 
     def handle_message(self, message):
         try:
-            response = get_controller_func(message.code)(message.payload)
-            self.send_message(response)
-        except:
-            self.send_bad_request(message)
+            controller_func = get_controller_func(message.code)
+
+            if controller_func:
+                response = get_controller_func(message.code)(message.payload)
+                self.send_message(response)
+            else:
+                self.send_bad_request(message)
+        except Exception as e:
+                print '[-]', e
+                self.send_server_error()
+
+    def send_server_error(self):
+        self.send_message(
+            Message(
+                Codes.SERVER_ERROR,
+                { 'message': 'The server has encountered an internal error.' }
+            )
+        )
 
     def send_bad_request(self):
         self.send_message(
