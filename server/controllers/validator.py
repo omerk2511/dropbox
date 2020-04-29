@@ -15,9 +15,9 @@ def is_payload_valid(payload, rules):
 def validator(rules):
     def validation_decorator(func):
         @functools.wraps(func)
-        def validation_wrapper(payload):
+        def validation_wrapper(payload, *args, **kwargs):
             if is_payload_valid(payload, rules):
-                return func(payload)
+                return func(payload, *args, **kwargs)
             else:
                 return Message(
                     Codes.BAD_REQUEST,

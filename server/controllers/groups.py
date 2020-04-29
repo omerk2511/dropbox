@@ -1,30 +1,21 @@
-import jwt
 import sqlite3 as lite
 
 from common import Codes, Message
 from controller import controller
 from validator import validator
-from ..config import JWT_SECRET_KEY
+from auth import authenticated
 from ..models import Groups
 
 CREATE_GROUP_PAYLOAD = [
-    ('token', [str, unicode]),
     ('name', [str, unicode])
 ]
 
 @controller(Codes.CREATE_GROUP)
+@authenticated
 @validator(CREATE_GROUP_PAYLOAD)
-def create_group(payload):
+def create_group(payload, user):
     try:
-        user_id = jwt.decode(payload['token'], JWT_SECRET_KEY, algorithm='HS256')['id']
-    except:
-        return Message(
-            Codes.FORBIDDEN,
-            { 'message': 'The supplied token is not valid.' }
-        )
-
-    try:
-        Groups.create(payload['name'], user_id)
+        Groups.create(payload['name'], user['id'])
 
         return Message(
             Codes.SUCCESS,
