@@ -5,7 +5,7 @@ from common import Codes, Message
 from controller import controller
 from validators import validator, existing_group
 from auth import authenticated, group_owner, group_user
-from ..models import Groups, Users, UsersGroups
+from ..models import Groups, Users, UsersGroups, Invites
 
 CREATE_GROUP_PAYLOAD = [
     ('name', [str, unicode])
@@ -99,19 +99,27 @@ def get_group_data(payload, user):
     owner = Users.get(group[2])[0]
 
     # also include the group files (or directories)
-    # also include the users & invites
+    # also include the users
     return Message(
         Codes.SUCCESS,
         {
             'message': 'The group data has been retrieved successfully.',
-            'group': {
-                'id': group[0],
-                'name': group[1],
-                'owner': {
-                    'id': group[2],
-                    'username': owner[1],
-                    'full_name': owner[2]
-                }
-            }
+            'id': payload['group'],
+            'name': group[1],
+            'owner': {
+                'id': group[2],
+                'username': owner[1],
+                'full_name': owner[2]
+            },
+            'invites': [
+                {
+                    'id': invite[4],
+                    'user': {
+                        'id': invite[0],
+                        'username': invite[1],
+                        'full_name': invite[2]
+                    }
+                } for invite in Invites.get_group_invites(payload['group'])
+            ]
         }
     )
