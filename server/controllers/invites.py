@@ -40,3 +40,58 @@ def invite(payload, user):
         Codes.SUCCESS,
         { 'message': 'The requested user has been invited successfully.' }
     )
+
+INVITE_OPERATION_PAYLOAD = [
+    ('invite', [int])
+]
+
+@controller(Codes.ACCEPT_INVITE)
+@authenticated
+@validator(INVITE_OPERATION_PAYLOAD)
+def accept_invite(payload, user):
+    try:
+        invite = Invites.get(payload['invite'])[0]
+    except:
+        return Message(
+            Codes.NOT_FOUND,
+            { 'message': 'There isn\'t any active invite with the given id.' }
+        )
+
+    if user['id'] != invite[1]:
+        return Message(
+            Codes.FORBIDDEN,
+            { 'message': 'This invitation was sent to another user.' }
+        )
+
+    UsersGroups.insert(user['id'], invite[2])
+    Invites.close(invite[0])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'You have successfully joined this group.' }
+    )
+
+@controller(Codes.REJECT_INVITE)
+@authenticated
+@validator(INVITE_OPERATION_PAYLOAD)
+def reject_invite(payload, user):
+    try:
+        invite = Invites.get(payload['invite'])[0]
+    except:
+        return Message(
+            Codes.NOT_FOUND,
+            { 'message': 'There isn\'t any active invite with the given id.' }
+        )
+
+    if user['id'] != invite[1]:
+        return Message(
+            Codes.FORBIDDEN,
+            { 'message': 'This invitation was sent to another user.' }
+        )
+
+    Invites.close(invite[0])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'You have successfully reject the invite.' }
+    )

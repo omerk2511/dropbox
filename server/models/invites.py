@@ -22,7 +22,7 @@ class Invites(object):
     @staticmethod
     def get(invite_id):
         return database.fetch(
-            'SELECT * FROM invites WHERE id = ?',
+            'SELECT * FROM invites WHERE id = ? AND revoked = 0 AND PENDING = 1',
             (invite_id,)
         )
 
