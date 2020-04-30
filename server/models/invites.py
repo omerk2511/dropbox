@@ -50,7 +50,6 @@ class Invites(object):
 
     @staticmethod
     def create(user_id, group_id):
-        # check if been invited already
         database.execute(
             'INSERT INTO invites (user_id, group_id) VALUES (?, ?)',
             (user_id, group_id)
