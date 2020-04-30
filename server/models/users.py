@@ -28,6 +28,13 @@ class Users(object):
         )
 
     @staticmethod
+    def get_by_username(username):
+        return database.fetch(
+            'SELECT * FROM users WHERE username = ?',
+            (username,)
+        )
+
+    @staticmethod
     def create(username, full_name, password):
         database.execute(
             'INSERT INTO users (username, full_name, password) VALUES (?, ?, ?)',

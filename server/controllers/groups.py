@@ -3,53 +3,9 @@ import sqlite3 as lite
 
 from common import Codes, Message
 from controller import controller
-from validator import validator
-from auth import authenticated
-from ..models import Groups, Users, UsersGroups
-
-def existing_group(func):
-    @functools.wraps(func)
-    def wrapper(payload, *args, **kwargs):
-        groups = Groups.get(payload['group'])
-
-        if not groups:
-            return Message(
-                Codes.NOT_FOUND,
-                { 'message': 'A group with this id was not found.' }
-            )
-
-        return func(payload, *args, **kwargs)
-
-    return wrapper
-
-def group_owner(func):
-    @functools.wraps(func)
-    def wrapper(payload, user, *args, **kwargs):
-        group = Groups.get(payload['group'])[0]
-        owner = group[2]
-
-        if user['id'] != owner:
-            return Message(
-                Codes.FORBIDDEN,
-                { 'message': 'You have to be a group\'s owner in order to modify it.' }
-            )
-
-        return func(payload, user, *args, **kwargs)
-    
-    return wrapper
-
-def group_user(func):
-    @functools.wraps(func)
-    def wrapper(payload, user, *args, **kwargs):
-        if user['id'] in [user[0] for user in UsersGroups.get_users(payload['group'])]:
-            return func(payload, user, *args, **kwargs)
-        else:
-            return Message(
-                Codes.FORBIDDEN,
-                { 'message': 'You have to be a group\'s user in order to get information about it.' }
-            )
-
-    return wrapper
+from validators import validator, existing_group
+from auth import authenticated, group_owner, group_user
+from ..models import Groups, Users, UsersGroups, Invites
 
 CREATE_GROUP_PAYLOAD = [
     ('name', [str, unicode])
@@ -148,14 +104,22 @@ def get_group_data(payload, user):
         Codes.SUCCESS,
         {
             'message': 'The group data has been retrieved successfully.',
-            'group': {
-                'id': group[0],
-                'name': group[1],
-                'owner': {
-                    'id': group[2],
-                    'username': owner[1],
-                    'full_name': owner[2]
-                }
-            }
+            'id': payload['group'],
+            'name': group[1],
+            'owner': {
+                'id': group[2],
+                'username': owner[1],
+                'full_name': owner[2]
+            },
+            'invites': [
+                {
+                    'id': invite[4],
+                    'user': {
+                        'id': invite[0],
+                        'username': invite[1],
+                        'full_name': invite[2]
+                    }
+                } for invite in Invites.get_group_invites(payload['group'])
+            ]
         }
     )

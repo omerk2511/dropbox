@@ -1,6 +1,7 @@
 import functools
 
 from common import Codes, Message
+from ..models import Groups
 
 def is_payload_valid(payload, rules):
     if type(payload) != dict:
@@ -37,3 +38,18 @@ def validator(rules):
         return validation_wrapper
 
     return validation_decorator
+
+def existing_group(func):
+    @functools.wraps(func)
+    def wrapper(payload, *args, **kwargs):
+        groups = Groups.get(payload['group'])
+
+        if not groups:
+            return Message(
+                Codes.NOT_FOUND,
+                { 'message': 'A group with this id was not found.' }
+            )
+
+        return func(payload, *args, **kwargs)
+
+    return wrapper
