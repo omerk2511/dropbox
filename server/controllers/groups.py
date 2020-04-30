@@ -5,7 +5,7 @@ from common import Codes, Message
 from controller import controller
 from validator import validator
 from auth import authenticated
-from ..models import Groups, Users
+from ..models import Groups, Users, UsersGroups
 
 def existing_group(func):
     @functools.wraps(func)
@@ -41,8 +41,13 @@ def group_owner(func):
 def group_user(func):
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
-        # validate that the user is a group user
-        return func(payload, user, *args, **kwargs)
+        if user['id'] in [user[0] for user in UsersGroups.get_users(payload['group'])]:
+            return func(payload, user, *args, **kwargs)
+        else:
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You have to be a group\'s user in order to get information about it.' }
+            )
 
     return wrapper
 
@@ -56,6 +61,7 @@ CREATE_GROUP_PAYLOAD = [
 def create_group(payload, user):
     try:
         group_id = Groups.create(payload['name'], user['id'])
+        UsersGroups.insert(user['id'], group_id)
 
         return Message(
             Codes.SUCCESS,
@@ -98,6 +104,9 @@ def update_group(payload, user):
     if 'owner' in payload:
         Groups.update_owner(payload['group'], payload['owner'])
 
+        UsersGroups.delete(user['id'], payload['group'])
+        UsersGroups.insert(user['id'], payload['group'])
+
     return Message(
         Codes.SUCCESS,
         { 'message': 'The group has been updated successfully.' }
@@ -134,6 +143,7 @@ def get_group_data(payload, user):
     owner = Users.get(group[2])[0]
 
     # also include the group files (or directories)
+    # also include the users
     return Message(
         Codes.SUCCESS,
         {

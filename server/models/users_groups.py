@@ -8,11 +8,11 @@ class UsersGroups(object):
         database.execute(
             '''
             CREATE TABLE IF NOT EXISTS users_groups (
-                user_id INTEGER,
+                user_id INTEGER NOT NULL,
+                group_id INTEGER NOT NULL,
+                PRIMARY KEY(user_id, group_id),
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-                group_id INTEGER,
-                FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
-                PRIMARY KEY(user_id, group_id)
+                FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE
             )
             '''
         )
@@ -44,4 +44,11 @@ class UsersGroups(object):
             WHERE ug.group_id = ?
             ''',
             (group_id,)
+        )
+
+    @staticmethod
+    def delete(user_id, group_id):
+        database.execute(
+            'DELETE FROM users_groups WHERE user_id = ? AND group_id = ?',
+            (user_id, group_id)
         )
