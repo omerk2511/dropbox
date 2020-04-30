@@ -12,6 +12,7 @@ class Database(object):
             cursor = connection.cursor()
             cursor.execute(*args)
             connection.commit()
+            return cursor.lastrowid
 
     def fetch(self, *args):
         with self.lock, lite.connect(DATABASE_PATH) as connection:
