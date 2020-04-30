@@ -24,7 +24,6 @@ class Codes(object):
     ACCEPT_INVITE = 'accept_invite'
     REJECT_INVITE = 'reject_invite'
     REVOKE_INVITE = 'revoke_invite'
-    GET_USER_INVITES = 'get_user_invite'
 
     CREATE_DIRECTORY = 'create_directory'
     UPDATE_DIRECTORY = 'update_directory'

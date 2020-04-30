@@ -99,7 +99,7 @@ def get_group_data(payload, user):
     owner = Users.get(group[2])[0]
 
     # also include the group files (or directories)
-    # also include the users
+    # also include the users & invites
     return Message(
         Codes.SUCCESS,
         {
