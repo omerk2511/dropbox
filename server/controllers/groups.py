@@ -133,6 +133,7 @@ def get_group_data(payload, user):
     group = Groups.get(payload['group'])[0]
     owner = Users.get(group[2])[0]
 
+    # also include the group files (or directories)
     return Message(
         Codes.SUCCESS,
         {
