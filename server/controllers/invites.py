@@ -95,3 +95,31 @@ def reject_invite(payload, user):
         Codes.SUCCESS,
         { 'message': 'You have successfully reject the invite.' }
     )
+
+@controller(Codes.REVOKE_INVITE)
+@authenticated
+@validator(INVITE_OPERATION_PAYLOAD)
+def revoke_invite(payload, user):
+    try:
+        invite = Invites.get(payload['invite'])[0]
+    except:
+        return Message(
+            Codes.NOT_FOUND,
+            { 'message': 'There isn\'t any active invite with the given id.' }
+        )
+
+    group = Groups.get(invite[2])[0]
+    owner = group[2]
+
+    if user['id'] != owner:
+        return Message(
+            Codes.FORBIDDEN,
+            { 'message': 'You have to be a group\'s owner in order to modify it.' }
+        )
+
+    Invites.revoke(invite[0])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'You have successfully revoked the invite.' }
+    )
