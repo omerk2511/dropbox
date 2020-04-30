@@ -32,7 +32,7 @@ class Invites(object):
             '''
             SELECT * FROM groups g
             LEFT JOIN invites i ON i.group_id = g.id
-            WHERE i.user_id = ?
+            WHERE i.user_id = ? AND i.revoked = 0 AND i.pending = 1
             ''',
             (user_id,)
         )
@@ -43,7 +43,7 @@ class Invites(object):
             '''
             SELECT * FROM users u
             LEFT JOIN invites i ON i.user_id = u.id
-            WHERE i.group_id = ?
+            WHERE i.group_id = ? AND i.revoked = 0 AND i.pending = 1
             ''',
             (group_id,)
         )
