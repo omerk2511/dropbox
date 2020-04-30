@@ -1,3 +1,4 @@
+import functools
 import sqlite3 as lite
 
 from common import Codes, Message
@@ -5,6 +6,40 @@ from controller import controller
 from validator import validator
 from auth import authenticated
 from ..models import Groups
+
+def existing_group(func):
+    @functools.wraps(func)
+    def wrapper(payload, *args, **kwargs):
+        groups = Groups.get(payload['group'])
+
+        if not groups:
+            return Message(
+                Codes.NOT_FOUND,
+                { 'message': 'A group with this id was not found.' }
+            )
+
+        return func(payload, *args, **kwargs)
+
+    return wrapper
+
+def group_owner(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        group = Groups.get(payload['group'])[0]
+        owner = group[2]
+
+        if user['id'] != owner:
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You have to be a group\'s owner in order to modify it.' }
+            )
+
+        return func(payload, user, *args, **kwargs)
+    
+    return wrapper
+
+def group_user(func):
+    pass
 
 CREATE_GROUP_PAYLOAD = [
     ('name', [str, unicode])
@@ -49,23 +84,9 @@ UPDATE_GROUP_PAYLOAD = [
 @controller(Codes.UPDATE_GROUP)
 @authenticated
 @validator(UPDATE_GROUP_PAYLOAD)
+@existing_group
+@group_owner
 def update_group(payload, user):
-    groups = Groups.get(payload['group'])
-
-    if not groups:
-        return Message(
-            Codes.NOT_FOUND,
-            { 'message': 'A group with this id was not found.' }
-        )
-
-    owner = groups[0][2]
-
-    if user['id'] != owner:
-        return Message(
-            Codes.FORBIDDEN,
-            { 'message': 'You have to be a group\'s owner in order to update it.' }
-        )
-
     if 'name' in payload:
         Groups.update_name(payload['group'], payload['name'])
 
@@ -84,23 +105,9 @@ DELETE_GROUP_PAYLOAD = [
 @controller(Codes.DELETE_GROUP)
 @authenticated
 @validator(DELETE_GROUP_PAYLOAD)
+@existing_group
+@group_owner
 def delete_group(payload, user):
-    groups = Groups.get(payload['group'])
-
-    if not groups:
-        return Message(
-            Codes.NOT_FOUND,
-            { 'message': 'A group with this id was not found.' }
-        )
-
-    owner = groups[0][2]
-
-    if user['id'] != owner:
-        return Message(
-            Codes.FORBIDDEN,
-            { 'message': 'You have to be a group\'s owner in order to update it.' }
-        )
-
     Groups.delete(payload['group']) # also delete files later
 
     return Message(
