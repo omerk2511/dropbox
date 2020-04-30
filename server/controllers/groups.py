@@ -5,7 +5,7 @@ from common import Codes, Message
 from controller import controller
 from validator import validator
 from auth import authenticated
-from ..models import Groups
+from ..models import Groups, Users
 
 def existing_group(func):
     @functools.wraps(func)
@@ -39,7 +39,12 @@ def group_owner(func):
     return wrapper
 
 def group_user(func):
-    pass
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        # validate that the user is a group user
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
 
 CREATE_GROUP_PAYLOAD = [
     ('name', [str, unicode])
@@ -113,4 +118,33 @@ def delete_group(payload, user):
     return Message(
         Codes.SUCCESS,
         { 'message': 'The group has been deleted successfully.' }
+    )
+
+GET_GROUP_DATA_PAYLOAD = [
+    ('group', [int])
+]
+
+@controller(Codes.GET_GROUP_DATA)
+@authenticated
+@validator(GET_GROUP_DATA_PAYLOAD)
+@existing_group
+@group_user
+def get_group_data(payload, user):
+    group = Groups.get(payload['group'])[0]
+    owner = Users.get(group[2])[0]
+
+    return Message(
+        Codes.SUCCESS,
+        {
+            'message': 'The group data has been retrieved successfully.',
+            'group': {
+                'id': group[0],
+                'name': group[1],
+                'owner': {
+                    'id': group[2],
+                    'username': owner[1],
+                    'full_name': owner[2]
+                }
+            }
+        }
     )

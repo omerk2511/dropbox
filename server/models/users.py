@@ -21,6 +21,13 @@ class Users(object):
         )
 
     @staticmethod
+    def get(user_id):
+        return database.fetch(
+            'SELECT * FROM users WHERE id = ?',
+            (user_id,)
+        )
+
+    @staticmethod
     def create(username, full_name, password):
         database.execute(
             'INSERT INTO users (username, full_name, password) VALUES (?, ?, ?)',
