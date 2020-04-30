@@ -2,7 +2,7 @@ import sqlite3 as lite
 
 from common import Codes, Message
 from controller import controller
-from validator import validator
+from validators import validator
 from ..models import Users
 
 LOG_IN_PAYLOAD = [

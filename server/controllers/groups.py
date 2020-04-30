@@ -3,53 +3,9 @@ import sqlite3 as lite
 
 from common import Codes, Message
 from controller import controller
-from validator import validator
-from auth import authenticated
+from validators import validator, existing_group
+from auth import authenticated, group_owner, group_user
 from ..models import Groups, Users, UsersGroups
-
-def existing_group(func):
-    @functools.wraps(func)
-    def wrapper(payload, *args, **kwargs):
-        groups = Groups.get(payload['group'])
-
-        if not groups:
-            return Message(
-                Codes.NOT_FOUND,
-                { 'message': 'A group with this id was not found.' }
-            )
-
-        return func(payload, *args, **kwargs)
-
-    return wrapper
-
-def group_owner(func):
-    @functools.wraps(func)
-    def wrapper(payload, user, *args, **kwargs):
-        group = Groups.get(payload['group'])[0]
-        owner = group[2]
-
-        if user['id'] != owner:
-            return Message(
-                Codes.FORBIDDEN,
-                { 'message': 'You have to be a group\'s owner in order to modify it.' }
-            )
-
-        return func(payload, user, *args, **kwargs)
-    
-    return wrapper
-
-def group_user(func):
-    @functools.wraps(func)
-    def wrapper(payload, user, *args, **kwargs):
-        if user['id'] in [user[0] for user in UsersGroups.get_users(payload['group'])]:
-            return func(payload, user, *args, **kwargs)
-        else:
-            return Message(
-                Codes.FORBIDDEN,
-                { 'message': 'You have to be a group\'s user in order to get information about it.' }
-            )
-
-    return wrapper
 
 CREATE_GROUP_PAYLOAD = [
     ('name', [str, unicode])

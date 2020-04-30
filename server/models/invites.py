@@ -9,12 +9,12 @@ class Invites(object):
             '''
             CREATE TABLE IF NOT EXISTS invites (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user INTEGER NOT NULL,
-                group INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                group_id INTEGER NOT NULL,
                 revoked BOOLEAN DEFAULT 0,
                 pending BOOLEAN DEFAULT 1,
-                FOREIGN KEY(user) REFERENCES users(id) ON DELETE CASCADE,
-                FOREIGN KEY(group) REFERENCES groups(id) ON DELETE CASCADE
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE
             )
             '''
         )
@@ -31,8 +31,8 @@ class Invites(object):
         return database.fetch(
             '''
             SELECT * FROM groups g
-            LEFT JOIN invites i ON i.group = g.id
-            WHERE i.user = ?
+            LEFT JOIN invites i ON i.group_id = g.id
+            WHERE i.user_id = ?
             ''',
             (user_id,)
         )
@@ -42,17 +42,17 @@ class Invites(object):
         return database.fetch(
             '''
             SELECT * FROM users u
-            LEFT JOIN invites i ON i.user = u.id
-            WHERE i.group = ?
+            LEFT JOIN invites i ON i.user_id = u.id
+            WHERE i.group_id = ?
             ''',
             (group_id,)
         )
 
     @staticmethod
-    def create(user, group):
+    def create(user_id, group_id):
         database.execute(
-            'INSERT INTO invites (user, group) VALUES (?, ?)',
-            (user, group)
+            'INSERT INTO invites (user_id, group_id) VALUES (?, ?)',
+            (user_id, group_id)
         )
 
     @staticmethod
