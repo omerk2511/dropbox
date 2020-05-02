@@ -14,7 +14,7 @@ And for the client, just write: `python -m client.client`
 - [x] User Management
 - [ ] File Management
 - [ ] Permission Management
-- [ ] Group Management
+- [x] Group Management
 - [ ] Admin Interface
 - [ ] File Compression
 
