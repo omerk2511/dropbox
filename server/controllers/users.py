@@ -40,7 +40,8 @@ CREATE_USER_PAYLOAD = [
 @validator(CREATE_USER_PAYLOAD)
 def create_user(payload):
     try:
-        Users.create(**payload)
+        user_id = Users.create(**payload)
+        Directories.create('/', user_id)
 
         return Message(
             Codes.SUCCESS,

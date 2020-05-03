@@ -5,7 +5,7 @@ from common import Codes, Message
 from controller import controller
 from validators import validator, existing_group
 from auth import authenticated, group_owner, group_user
-from ..models import Groups, Users, UsersGroups, Invites
+from ..models import Groups, Users, UsersGroups, Invites, Directories
 
 CREATE_GROUP_PAYLOAD = [
     ('name', [str, unicode])
@@ -17,6 +17,8 @@ CREATE_GROUP_PAYLOAD = [
 def create_group(payload, user):
     try:
         group_id = Groups.create(payload['name'], user['id'])
+        
+        Directories.create('/', user['id'], group_id)
         UsersGroups.insert(user['id'], group_id)
 
         return Message(

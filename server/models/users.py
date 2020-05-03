@@ -36,7 +36,7 @@ class Users(object):
 
     @staticmethod
     def create(username, full_name, password):
-        database.execute(
+        return database.execute(
             'INSERT INTO users (username, full_name, password) VALUES (?, ?, ?)',
             (username, full_name, hashlib.sha256(password).hexdigest())
         )
