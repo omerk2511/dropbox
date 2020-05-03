@@ -7,23 +7,23 @@ class Codes(object):
     CONFLICT = 'conflict'
     SERVER_ERROR = 'server_error'
 
-    LOG_IN = 'log_in'
+    LOG_IN = 'log_in' #
 
-    CREATE_USER = 'create_user'
+    CREATE_USER = 'create_user' #
     UPDATE_USER = 'update_user'
-    DELETE_USER = 'delete_user'
-    GET_USER_DATA = 'get_user_data'
+    DELETE_USER = 'delete_user' #
+    GET_USER_DATA = 'get_user_data' #
 
-    CREATE_GROUP = 'create_group'
-    UPDATE_GROUP = 'update_group'
+    CREATE_GROUP = 'create_group' #
+    UPDATE_GROUP = 'update_group' #
     DELETE_GROUP = 'delete_group'
-    GET_GROUP_DATA = 'get_group_data'
+    GET_GROUP_DATA = 'get_group_data' #
     LEAVE_GROUP = 'leave_group'
 
-    INVITE = 'invite'
-    ACCEPT_INVITE = 'accept_invite'
-    REJECT_INVITE = 'reject_invite'
-    REVOKE_INVITE = 'revoke_invite'
+    INVITE = 'invite' #
+    ACCEPT_INVITE = 'accept_invite' #
+    REJECT_INVITE = 'reject_invite' #
+    REVOKE_INVITE = 'revoke_invite' #
 
     CREATE_DIRECTORY = 'create_directory'
     UPDATE_DIRECTORY = 'update_directory'
