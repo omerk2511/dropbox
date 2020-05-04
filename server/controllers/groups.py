@@ -1,4 +1,3 @@
-import functools
 import sqlite3 as lite
 
 from common import Codes, Message

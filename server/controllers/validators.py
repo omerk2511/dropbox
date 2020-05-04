@@ -18,7 +18,8 @@ def is_payload_valid(payload, rules):
             if count == 0:
                 return False
         else:
-            if rule[0] not in payload or type(payload[rule[0]]) not in rule[1]:
+            if (rule[0] not in payload or type(payload[rule[0]])
+                not in rule[1]) and (len(rule) == 2 or not rule[2]):
                 return False
 
     return True
