@@ -83,7 +83,7 @@ def get_user_data(payload, user):
         } for invite in Invites.get_user_invites(user['id'])
     ]
 
-    user_data['files'] = Directories.get_directory_tree(user['id'])
+    user_data['files'] = Directories.get_user_directory_tree(user['id'])
     # also include the actual files (rather than just the directories)
 
     return Message(

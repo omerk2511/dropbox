@@ -50,15 +50,24 @@ class Directories(object):
         )
 
     @staticmethod
-    def get_directory_tree(user_id):
+    def get_user_directory_tree(user_id):
         directories = Directories.get_user_directories(user_id)
+        return Directories.get_directory_tree(directories)
 
+    @staticmethod
+    def get_group_directory_tree(group_id):
+        directories = Directories.get_group_directories(group_id)
+        return Directories.get_directory_tree(directories)
+
+    @staticmethod
+    def get_directory_tree(directories):
         root = [directory for directory in directories if directory[4] == None][0]
         directories = [directory for directory in directories if directory[4] != None]
 
         tree = {
             'id': root[0],
             'name': root[1],
+            'owner': root[2],
             'type': 'directory',
             'files': []
         }
@@ -81,6 +90,7 @@ class Directories(object):
                     {
                         'id': directories[0][0],
                         'name': directories[0][1],
+                        'owner': directories[0][2],
                         'type': 'directory',
                         'files': []
                     }

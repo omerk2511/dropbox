@@ -49,6 +49,12 @@ def create_directory(payload, user):
                 { 'message': 'You can\'t create a directory whose parent is not in the same group.' }
             )
     else:
+        if results[0][3]:
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You can\'t create a personal directory whose parent is in a group.' }
+            )
+
         if results[0][2] != user['id']:
             return Message(
                 Codes.FORBIDDEN,

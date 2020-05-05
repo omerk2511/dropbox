@@ -48,7 +48,7 @@ class UsersGroups(object):
 
     @staticmethod
     def is_in_group(user_id, group_id):
-        results = database.fecth(
+        results = database.fetch(
             'SELECT * FROM users_groups WHERE user_id = ? AND group_id = ?',
             (user_id, group_id)
         )
