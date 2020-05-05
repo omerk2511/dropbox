@@ -1,7 +1,7 @@
 import functools
 
 from common import Codes, Message
-from ..models import Groups
+from ..models import Groups, Directories
 
 def is_payload_valid(payload, rules):
     if type(payload) != dict:
@@ -49,6 +49,21 @@ def existing_group(func):
             return Message(
                 Codes.NOT_FOUND,
                 { 'message': 'A group with this id was not found.' }
+            )
+
+        return func(payload, *args, **kwargs)
+
+    return wrapper
+
+def existing_directory(func):
+    @functools.wraps(func)
+    def wrapper(payload, *args, **kwargs):
+        directories = Directories.get(payload['directory'])
+
+        if not directories:
+            return Message(
+                Codes.NOT_FOUND,
+                { 'message': 'A directory with this id was not found.' }
             )
 
         return func(payload, *args, **kwargs)
