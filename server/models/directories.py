@@ -108,6 +108,13 @@ class Directories(object):
         )
 
     @staticmethod
+    def update_owner(old_owner, new_owner, group):
+        database.execute(
+            'UPDATE directories SET owner = ? WHERE owner = ? AND `group` = ?',
+            (new_owner, old_owner, group)
+        )
+
+    @staticmethod
     def delete(directory_id):
         database.execute(
             'DELETE FROM directories WHERE id = ?',

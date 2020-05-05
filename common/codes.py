@@ -16,9 +16,9 @@ class Codes(object):
 
     CREATE_GROUP = 'create_group' #
     UPDATE_GROUP = 'update_group' #
-    DELETE_GROUP = 'delete_group'
+    DELETE_GROUP = 'delete_group' #
     GET_GROUP_DATA = 'get_group_data' #
-    LEAVE_GROUP = 'leave_group'
+    LEAVE_GROUP = 'leave_group' #
 
     INVITE = 'invite' #
     ACCEPT_INVITE = 'accept_invite' #

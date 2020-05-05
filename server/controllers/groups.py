@@ -127,7 +127,36 @@ def get_group_data(payload, user):
                     'username': user[1],
                     'full_name': user[2]
                 } for user in UsersGroups.get_users(payload['group'])
-            ], # TBA
+            ],
             'files': Directories.get_group_directory_tree(payload['group'])
         }
+    )
+
+LEAVE_GROUP_PAYLOAD = [
+    ('group', [int])
+]
+
+@controller(Codes.LEAVE_GROUP)
+@authenticated
+@validator(LEAVE_GROUP_PAYLOAD)
+@existing_group
+@group_user
+def leave_group(payload, user):
+    group = Groups.get(payload['group'])[0]
+    owner = group[2]
+
+    if user['id'] == owner:
+        return Message(
+            Codes.FORBIDDEN,
+            { 'message': 'You can\'t leave a group that you own.' }
+        )
+
+    # also update the files' owner
+    Directories.update_owner(user['id'], owner, payload['group'])
+
+    UsersGroups.delete(user['id'], payload['group'])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'You have left the group successfully.' }
     )
