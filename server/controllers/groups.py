@@ -100,7 +100,6 @@ def get_group_data(payload, user):
     owner = Users.get(group[2])[0]
 
     # also include the group files
-    # also include the users
     return Message(
         Codes.SUCCESS,
         {
@@ -122,7 +121,13 @@ def get_group_data(payload, user):
                     }
                 } for invite in Invites.get_group_invites(payload['group'])
             ],
-            'users': [], # TBA
+            'users': [
+                {
+                    'id': user[0],
+                    'username': user[1],
+                    'full_name': user[2]
+                } for user in UsersGroups.get_users(payload['group'])
+            ], # TBA
             'files': Directories.get_group_directory_tree(payload['group'])
         }
     )

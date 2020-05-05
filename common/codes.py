@@ -25,7 +25,7 @@ class Codes(object):
     REJECT_INVITE = 'reject_invite' #
     REVOKE_INVITE = 'revoke_invite' #
 
-    CREATE_DIRECTORY = 'create_directory'
+    CREATE_DIRECTORY = 'create_directory' #
     UPDATE_DIRECTORY = 'update_directory'
     DELETE_DIRECTORY = 'delete_directory'
 
