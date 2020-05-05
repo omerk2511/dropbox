@@ -53,6 +53,31 @@ def create_user(payload):
             { 'message': 'A user with this username already exists.' }
         )
 
+UPDATE_USER_PAYLOAD = [
+    [
+        ('full_name', [str, unicode]),
+        ('password', [str, unicode])
+    ]
+]
+
+@controller(Codes.UPDATE_USER)
+@authenticated
+@validator(UPDATE_USER_PAYLOAD)
+def update_user(payload, user):
+    if 'full_name' in payload:
+        Users.update_full_name(user['id'], payload['full_name'])
+
+    if 'password' in payload:
+        Users.update_password(user['id'], payload['password'])
+
+    return Message(
+        Codes.SUCCESS,
+        {
+            'message': 'The user has been updated successfully.',
+            'token': Users.get_jwt(user['id'])
+        }
+    )
+
 @controller(Codes.GET_USER_DATA)
 @authenticated
 def get_user_data(payload, user):

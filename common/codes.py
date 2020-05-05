@@ -10,8 +10,8 @@ class Codes(object):
     LOG_IN = 'log_in' #
 
     CREATE_USER = 'create_user' #
-    UPDATE_USER = 'update_user'
-    DELETE_USER = 'delete_user' #
+    UPDATE_USER = 'update_user' #
+    DELETE_USER = 'delete_user'
     GET_USER_DATA = 'get_user_data' #
 
     CREATE_GROUP = 'create_group' #

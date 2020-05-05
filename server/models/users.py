@@ -42,10 +42,36 @@ class Users(object):
         )
 
     @staticmethod
+    def update_full_name(user_id, full_name):
+        database.execute(
+            'UPDATE users SET full_name = ? WHERE id = ?',
+            (full_name, user_id)
+        )
+
+    @staticmethod
+    def update_password(user_id, password):
+        database.execute(
+            'UPDATE users SET password = ? WHERE id = ?',
+            (hashlib.sha256(password).hexdigest(), user_id)
+        )
+
+    @staticmethod
     def log_in(username, password):
         users = database.fetch(
             'SELECT * FROM users WHERE username = ? AND password = ?',
             (username, hashlib.sha256(password).hexdigest())
+        )
+
+        if users:
+            return Users.get_jwt(users[0][0])
+        
+        return None
+
+    @staticmethod
+    def get_jwt(user_id):
+        users = database.fetch(
+            'SELECT * FROM users WHERE id = ?',
+            (user_id,)
         )
 
         if users:
