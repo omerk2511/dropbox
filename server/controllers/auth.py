@@ -49,3 +49,19 @@ def group_user(func):
         return func(payload, user, *args, **kwargs)
 
     return wrapper
+
+def directory_owner(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        directory = Directories.get(payload['directory'])[0]
+        owner = directory[2]
+
+        if user['id'] != owner:
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You have to be a directory\'s owner in order to modify it.' }
+            )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
