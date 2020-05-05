@@ -4,7 +4,7 @@ from common import Codes, Message
 from controller import controller
 from validators import validator
 from auth import authenticated
-from ..models import Users, Invites, UsersGroups
+from ..models import Users, Invites, UsersGroups, Directories
 
 LOG_IN_PAYLOAD = [
     ('username', [str, unicode]),
@@ -83,7 +83,8 @@ def get_user_data(payload, user):
         } for invite in Invites.get_user_invites(user['id'])
     ]
 
-    # files - later
+    user_data['files'] = Directories.get_directory_tree(user['id'])
+    # also include the actual files (rather than just the directories)
 
     return Message(
         Codes.SUCCESS,

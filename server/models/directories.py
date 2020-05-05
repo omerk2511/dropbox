@@ -33,7 +33,7 @@ class Directories(object):
             '''
             SELECT * FROM directories d
             LEFT JOIN users u ON d.owner = u.id
-            WHERE u.id = ? AND d.`group` = NULL
+            WHERE u.id = ? AND d.`group` IS NULL
             ''',
             (user_id,)
         )
@@ -48,6 +48,47 @@ class Directories(object):
             ''',
             (group_id,)
         )
+
+    @staticmethod
+    def get_directory_tree(user_id):
+        directories = Directories.get_user_directories(user_id)
+
+        root = [directory for directory in directories if directory[4] == None][0]
+        directories = [directory for directory in directories if directory[4] != None]
+
+        tree = {
+            'id': root[0],
+            'name': root[1],
+            'type': 'directory',
+            'files': []
+        }
+
+        while len(directories) != 0:
+            parent = directories[0][4]
+            parent_node = None
+
+            tree_stack = [tree]
+
+            while not parent_node and len(tree_stack) > 0:
+                if tree_stack[0]['id'] == parent:
+                    parent_node = tree_stack[0]
+                else:
+                    tree_stack += tree_stack[0]['files']
+                    tree_stack = tree_stack[1:]
+
+            if parent_node:
+                parent_node['files'].append(
+                    {
+                        'id': directories[0][0],
+                        'name': directories[0][1],
+                        'type': 'directory',
+                        'files': []
+                    }
+                )
+
+            directories = directories[1:]
+
+        return tree
 
     @staticmethod
     def create(name, owner, group=None, parent=None):
