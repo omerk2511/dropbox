@@ -4,7 +4,7 @@ from common import Codes, Message
 from controller import controller
 from validators import validator
 from auth import authenticated
-from ..models import Users, Invites, UsersGroups
+from ..models import Users, Invites, UsersGroups, Directories
 
 LOG_IN_PAYLOAD = [
     ('username', [str, unicode]),
@@ -40,7 +40,8 @@ CREATE_USER_PAYLOAD = [
 @validator(CREATE_USER_PAYLOAD)
 def create_user(payload):
     try:
-        Users.create(**payload)
+        user_id = Users.create(**payload)
+        Directories.create('/', user_id)
 
         return Message(
             Codes.SUCCESS,
@@ -82,7 +83,8 @@ def get_user_data(payload, user):
         } for invite in Invites.get_user_invites(user['id'])
     ]
 
-    # files - later
+    user_data['files'] = Directories.get_user_directory_tree(user['id'])
+    # also include the actual files (rather than just the directories)
 
     return Message(
         Codes.SUCCESS,

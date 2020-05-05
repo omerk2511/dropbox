@@ -40,12 +40,12 @@ def group_owner(func):
 def group_user(func):
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
-        if user['id'] in [user[0] for user in UsersGroups.get_users(payload['group'])]:
-            return func(payload, user, *args, **kwargs)
-        else:
+        if not UsersGroups.is_in_group(user['id'], payload['group']):
             return Message(
                 Codes.FORBIDDEN,
                 { 'message': 'You have to be a group\'s user in order to get information about it.' }
             )
+
+        return func(payload, user, *args, **kwargs)
 
     return wrapper

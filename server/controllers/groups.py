@@ -1,11 +1,10 @@
-import functools
 import sqlite3 as lite
 
 from common import Codes, Message
 from controller import controller
 from validators import validator, existing_group
 from auth import authenticated, group_owner, group_user
-from ..models import Groups, Users, UsersGroups, Invites
+from ..models import Groups, Users, UsersGroups, Invites, Directories
 
 CREATE_GROUP_PAYLOAD = [
     ('name', [str, unicode])
@@ -17,6 +16,8 @@ CREATE_GROUP_PAYLOAD = [
 def create_group(payload, user):
     try:
         group_id = Groups.create(payload['name'], user['id'])
+        
+        Directories.create('/', user['id'], group_id)
         UsersGroups.insert(user['id'], group_id)
 
         return Message(
@@ -98,7 +99,7 @@ def get_group_data(payload, user):
     group = Groups.get(payload['group'])[0]
     owner = Users.get(group[2])[0]
 
-    # also include the group files (or directories)
+    # also include the group files
     # also include the users
     return Message(
         Codes.SUCCESS,
@@ -120,6 +121,8 @@ def get_group_data(payload, user):
                         'full_name': invite[2]
                     }
                 } for invite in Invites.get_group_invites(payload['group'])
-            ]
+            ],
+            'users': [], # TBA
+            'files': Directories.get_group_directory_tree(payload['group'])
         }
     )
