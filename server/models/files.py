@@ -1,7 +1,9 @@
 import uuid
+import base64
 
 from initialization import initializer
 from ..handlers.database import database
+from ..config import FILES_PATH
 
 class Files(object):
     @staticmethod
@@ -32,13 +34,27 @@ class Files(object):
     def create(name, owner, directory):
         file_uuid = str(uuid.uuid4())
 
-        return {
-            'id': database.execute(
-                'INSERT INTO files (uuid, name, owner, directory) VALUES (?, ?, ?, ?)',
-                (name, owner, directory)
-            ),
-            'uuid': file_uuid
-        }
+        with open(FILES_PATH + file_uuid, 'wb+') as f:
+            f.write('')
+
+        return database.execute(
+            'INSERT INTO files (uuid, name, owner, directory) VALUES (?, ?, ?, ?)',
+            (file_uuid, name, owner, directory)
+        )
+
+    @staticmethod
+    def write(file_id, content):
+        file_uuid = Files.get(file_id)[0][1]
+
+        with open(FILES_PATH + file_uuid, 'wb+') as f:
+            f.write(base64.b64decode(content))
+
+    @staticmethod
+    def read(file_id):
+        file_uuid = Files.get(file_id)[0][1]
+
+        with open(FILES_PATH + file_uuid, 'rb+') as f:
+            return base64.b64encode(f.read())
 
     @staticmethod
     def update_name(file_id, name):
