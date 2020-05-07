@@ -1,7 +1,7 @@
 import functools
 
 from common import Codes, Message
-from ..models import Groups, Directories
+from ..models import Groups, Directories, Files
 
 def is_payload_valid(payload, rules):
     if type(payload) != dict:

@@ -31,6 +31,13 @@ class Files(object):
         )
 
     @staticmethod
+    def get_directory_files(directory_id):
+        return database.fetch(
+            'SELECT * FROM files WHERE directory = ?',
+            (directory_id,)
+        )
+
+    @staticmethod
     def create(name, owner, directory):
         file_uuid = str(uuid.uuid4())
 

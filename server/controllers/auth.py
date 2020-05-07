@@ -83,7 +83,7 @@ def in_directory_context(func):
         group = directory[3]
 
         if group:
-            if not UsersGroups.is_in_group(user['id'], group)
+            if not UsersGroups.is_in_group(user['id'], group):
                 return Message(
                     Codes.FORBIDDEN,
                     { 'message': 'You have to be a member of the group in which the directory resides in order to modify it.' }
