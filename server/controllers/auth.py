@@ -2,7 +2,7 @@ import jwt
 import functools
 
 from common import Codes, Message
-from ..models import Groups, UsersGroups
+from ..models import Groups, UsersGroups, Directories
 from ..config import JWT_SECRET_KEY
 
 def authenticated(func):

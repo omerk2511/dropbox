@@ -108,10 +108,31 @@ class Directories(object):
         )
 
     @staticmethod
-    def update_owner(old_owner, new_owner, group):
+    def update_owner_in_group(old_owner, new_owner, group):
         database.execute(
             'UPDATE directories SET owner = ? WHERE owner = ? AND `group` = ?',
             (new_owner, old_owner, group)
+        )
+
+    @staticmethod
+    def update_name(directory_id, name):
+        database.execute(
+            'UPDATE directories SET name = ? WHERE id = ?',
+            (name, directory_id)
+        )
+
+    @staticmethod
+    def update_owner(directory_id, owner):
+        database.execute(
+            'UPDATE directories SET owner = ? WHERE id = ?',
+            (owner, directory_id)
+        )
+
+    @staticmethod
+    def update_parent(directory_id, parent):
+        database.execute(
+            'UPDATE directories SET parent = ? WHERE id = ?',
+            (parent, directory_id)
         )
 
     @staticmethod

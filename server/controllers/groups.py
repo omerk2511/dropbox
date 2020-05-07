@@ -152,7 +152,7 @@ def leave_group(payload, user):
         )
 
     # also update the files' owner
-    Directories.update_owner(user['id'], owner, payload['group'])
+    Directories.update_owner_in_group(user['id'], owner, payload['group'])
 
     UsersGroups.delete(user['id'], payload['group'])
 
