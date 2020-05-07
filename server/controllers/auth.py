@@ -73,3 +73,28 @@ def directory_owner(func):
         return func(payload, user, *args, **kwargs)
 
     return wrapper
+
+def in_directory_context(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        directory = Directories.get(payload['directory'])[0]
+
+        owner = directory[2]
+        group = directory[3]
+
+        if group:
+            if not UsersGroups.is_in_group(user['id'], group)
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You have to be a member of the group in which the directory resides in order to modify it.' }
+                )
+        else:
+            if user['id'] != owner:
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You cannot modify a directory which is not yours.' }
+                )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
