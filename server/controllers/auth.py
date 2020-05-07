@@ -54,9 +54,17 @@ def directory_owner(func):
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         directory = Directories.get(payload['directory'])[0]
-        owner = directory[2]
 
-        if user['id'] != owner:
+        owner = directory[2]
+        group = directory[3]
+
+        is_owner = user['id'] == owner
+
+        if group:
+            is_group_owner = user['id'] == Groups.get(group)[0][2]
+            is_owner = is_owner or is_group_owner
+
+        if not is_owner:
             return Message(
                 Codes.FORBIDDEN,
                 { 'message': 'You have to be a directory\'s owner in order to modify it.' }
