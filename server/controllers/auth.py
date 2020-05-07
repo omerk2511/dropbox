@@ -2,7 +2,7 @@ import jwt
 import functools
 
 from common import Codes, Message
-from ..models import Groups, UsersGroups
+from ..models import Groups, UsersGroups, Directories
 from ..config import JWT_SECRET_KEY
 
 def authenticated(func):
@@ -44,6 +44,30 @@ def group_user(func):
             return Message(
                 Codes.FORBIDDEN,
                 { 'message': 'You have to be a group\'s user in order to get information about it.' }
+            )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
+
+def directory_owner(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        directory = Directories.get(payload['directory'])[0]
+
+        owner = directory[2]
+        group = directory[3]
+
+        is_owner = user['id'] == owner
+
+        if group:
+            is_group_owner = user['id'] == Groups.get(group)[0][2]
+            is_owner = is_owner or is_group_owner
+
+        if not is_owner:
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You have to be a directory\'s owner in order to modify it.' }
             )
 
         return func(payload, user, *args, **kwargs)
