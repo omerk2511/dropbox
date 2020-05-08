@@ -1,5 +1,6 @@
-import uuid
 import base64
+import os
+from uuid import uuid4
 
 from initialization import initializer
 from ..handlers.database import database
@@ -39,7 +40,7 @@ class Files(object):
 
     @staticmethod
     def create(name, owner, directory):
-        file_uuid = str(uuid.uuid4())
+        file_uuid = str(uuid4())
 
         with open(FILES_PATH + file_uuid, 'wb+') as f:
             f.write('')
@@ -82,4 +83,14 @@ class Files(object):
         database.execute(
             'UPDATE files SET directory = ? WHERE id = ?',
             (directory, file_id)
+        )
+
+    @staticmethod
+    def delete(file_id):
+        file_uuid = Files.get(file_id)[0][1]
+        os.remove(FILES_PATH + file_uuid)
+
+        database.execute(
+            'DELETE FROM files WHERE id = ?',
+            (file_id,)
         )
