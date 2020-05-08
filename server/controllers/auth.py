@@ -2,7 +2,7 @@ import jwt
 import functools
 
 from common import Codes, Message
-from ..models import Groups, UsersGroups, Directories
+from ..models import Groups, UsersGroups, Directories, Files
 from ..config import JWT_SECRET_KEY
 
 def authenticated(func):
@@ -93,6 +93,32 @@ def in_directory_context(func):
                 return Message(
                     Codes.FORBIDDEN,
                     { 'message': 'You cannot modify a directory which is not yours.' }
+                )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
+
+def in_file_context(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        f = Files.get(payload['file'])[0]
+        directory = Directories.get(f[4])[0]
+
+        owner = directory[2]
+        group = directory[3]
+
+        if group:
+            if not UsersGroups.is_in_group(user['id'], group):
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You have to be a member of the group in which the file resides in order to get it.' }
+                )
+        else:
+            if user['id'] != owner:
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You cannot get a file which is not yours.' }
                 )
 
         return func(payload, user, *args, **kwargs)
