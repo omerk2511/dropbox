@@ -2,7 +2,7 @@ import jwt
 import functools
 
 from common import Codes, Message
-from ..models import Groups, UsersGroups, Directories
+from ..models import Groups, UsersGroups, Directories, Files
 from ..config import JWT_SECRET_KEY
 
 def authenticated(func):
@@ -69,6 +69,80 @@ def directory_owner(func):
                 Codes.FORBIDDEN,
                 { 'message': 'You have to be a directory\'s owner in order to modify it.' }
             )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
+
+def in_directory_context(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        directory = Directories.get(payload['directory'])[0]
+
+        owner = directory[2]
+        group = directory[3]
+
+        if group:
+            if not UsersGroups.is_in_group(user['id'], group):
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You have to be a member of the group in which the directory resides in order to modify it.' }
+                )
+        else:
+            if user['id'] != owner:
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You cannot modify a directory which is not yours.' }
+                )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
+
+def file_owner(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        f = Files.get(payload['file'])[0]
+        directory = Directories.get(f[4])[0]
+        group_id = directory[3]
+
+        is_file_owner = user['id'] == f[3] or user['id'] == directory[2]
+
+        if group_id:
+            group = Directories.get(group_id)[0]
+            is_file_owner = is_file_owner or user['id'] == group[2]
+
+        if not is_file_owner:
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You have to be a file\'s owner in order to modify it.' }
+            )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
+
+def in_file_context(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        f = Files.get(payload['file'])[0]
+        directory = Directories.get(f[4])[0]
+
+        owner = directory[2]
+        group = directory[3]
+
+        if group:
+            if not UsersGroups.is_in_group(user['id'], group):
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You have to be a member of the group in which the file resides in order to get it.' }
+                )
+        else:
+            if user['id'] != owner:
+                return Message(
+                    Codes.FORBIDDEN,
+                    { 'message': 'You cannot get a file which is not yours.' }
+                )
 
         return func(payload, user, *args, **kwargs)
 

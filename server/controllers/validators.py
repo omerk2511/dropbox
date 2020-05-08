@@ -1,7 +1,7 @@
 import functools
 
 from common import Codes, Message
-from ..models import Groups, Directories
+from ..models import Groups, Directories, Files
 
 def is_payload_valid(payload, rules):
     if type(payload) != dict:
@@ -64,6 +64,36 @@ def existing_directory(func):
             return Message(
                 Codes.NOT_FOUND,
                 { 'message': 'A directory with this id was not found.' }
+            )
+
+        return func(payload, *args, **kwargs)
+
+    return wrapper
+
+def existing_file(func):
+    @functools.wraps(func)
+    def wrapper(payload, *args, **kwargs):
+        files = Files.get(payload['file'])
+
+        if not files:
+            return Message(
+                Codes.NOT_FOUND,
+                { 'message': 'There is no file with this id.' }
+            )
+
+        return func(payload, *args, **kwargs)
+
+    return wrapper
+
+def not_existing_file(func):
+    @functools.wraps(func)
+    def wrapper(payload, *args, **kwargs):
+        files = Files.get_directory_files(payload['directory'])
+
+        if payload['name'] in [f[2] for f in files]:
+            return Message(
+                Codes.CONFLICT,
+                { 'message': 'There is already a file with the same name in the directory.' }
             )
 
         return func(payload, *args, **kwargs)

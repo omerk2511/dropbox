@@ -3,3 +3,4 @@ from users import *
 from groups import *
 from invites import *
 from directories import *
+from files import *
