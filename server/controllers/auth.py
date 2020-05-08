@@ -99,6 +99,29 @@ def in_directory_context(func):
 
     return wrapper
 
+def file_owner(func):
+    @functools.wraps(func)
+    def wrapper(payload, user, *args, **kwargs):
+        f = Files.get(payload['file'])[0]
+        directory = Directories.get(f[4])[0]
+        group_id = directory[3]
+
+        is_file_owner = user['id'] == f[3] or user['id'] == directory[2]
+
+        if group_id:
+            group = Directories.get(group_id)[0]
+            is_file_owner = is_file_owner or user['id'] == group[2]
+
+        if not is_file_owner:
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You have to be a file\'s owner in order to modify it.' }
+            )
+
+        return func(payload, user, *args, **kwargs)
+
+    return wrapper
+
 def in_file_context(func):
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
