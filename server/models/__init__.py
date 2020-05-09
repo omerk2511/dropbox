@@ -4,4 +4,5 @@ from users_groups import UsersGroups
 from invites import Invites
 from directories import Directories
 from files import Files
+from editors import Editors
 from initialization import initialize_models
