@@ -12,8 +12,8 @@ And for the client, just write: `python -m client.client`
 - [x] Multithreaded Server
 - [x] JSON Based Protocol
 - [x] User Management
-- [ ] File Management
-- [ ] Permission Management
+- [x] File Management
+- [x] Permission Management
 - [x] Group Management
 - [ ] Admin Interface
 - [ ] File Compression
