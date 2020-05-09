@@ -1,7 +1,7 @@
 import functools
 
 from common import Codes, Message
-from ..models import Groups, Directories, Files
+from ..models import Groups, Directories, Files, Editors
 
 def is_payload_valid(payload, rules):
     if type(payload) != dict:
@@ -98,6 +98,21 @@ def not_existing_file(func):
             return Message(
                 Codes.CONFLICT,
                 { 'message': 'There is already a file with the same name in the directory.' }
+            )
+
+        return func(payload, *args, **kwargs)
+
+    return wrapper
+
+def existing_editor(func):
+    @functools.wraps(func)
+    def wrapper(payload, *args, **kwargs):
+        editors = Editors.get(payload['editor'])
+
+        if not editors:
+            return Message(
+                Codes.NOT_FOUND,
+                { 'message': 'Editor not found.' }
             )
 
         return func(payload, *args, **kwargs)
