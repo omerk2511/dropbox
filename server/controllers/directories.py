@@ -1,7 +1,7 @@
 from common import Codes, Message
 from controller import controller
 from validators import validator, existing_directory
-from auth import authenticated, directory_owner
+from auth import authenticated, directory_editor, is_directory_owner
 from ..models import Groups, UsersGroups, Directories
 
 CREATE_DIRECTORY_PAYLOAD = [
@@ -95,9 +95,16 @@ UPDATE_DIRECTORY_PAYLOAD = [
 @authenticated
 @validator(UPDATE_DIRECTORY_PAYLOAD)
 @existing_directory
-@directory_owner
+@directory_editor
 def update_directory(payload, user):
     group = Directories.get(payload['directory'])[0][3]
+
+    if 'owner' in payload or 'parent' in payload:
+        if not is_directory_owner(payload['directory'], user['id']):
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You cannot change the location or the owner of a directory you do not own.' }
+            )
 
     if 'name' in payload:
         if group:
