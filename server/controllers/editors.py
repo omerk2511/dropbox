@@ -1,6 +1,6 @@
 from common import Codes, Message
 from controller import controller
-from validators import validator, file_exists, directory_exists
+from validators import validator, file_exists, directory_exists, existing_editor
 from auth import authenticated, is_file_owner, is_in_file_context, is_directory_owner, is_in_directory_context
 from ..models import Users, Editors
 
@@ -69,4 +69,38 @@ def add_editor(payload, user):
     return Message(
         Codes.SUCCESS,
         { 'message': 'The file / directory has been shared successfully.' }
+    )
+
+REMOVE_EDITOR_PAYLOAD = [
+    ('editor', [int])
+]
+
+@controller(Codes.REMOVE_EDITOR)
+@authenticated
+@validator(REMOVE_EDITOR_PAYLOAD)
+@existing_editor
+def remove_editor(payload, user):
+    editor = Editors.get(payload['editor'])[0]
+
+    file_id = editor[2]
+    directory_id = editor[3]
+
+    if file_id:
+        if not is_file_owner(file_id, user['id']):
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message':'You cannot modify a file you do not own.' }
+            )
+    else:
+        if not is_directory_editor(directory_id, user['id']):
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message':'You cannot modify a directory you do not own.' }
+            )
+
+    Editors.delete(payload['editor'])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'The editor has been removed successfully.' }
     )
