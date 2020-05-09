@@ -1,5 +1,4 @@
 import socket
-
 from threading import Thread, Event
 
 from common import Codes, Message
@@ -65,8 +64,8 @@ class Connection(Thread):
             else:
                 self.send_bad_request()
         except Exception as e:
-                print '[-]', e
-                self.send_server_error()
+            print '[-]', e
+            self.send_server_error()
 
     def send_server_error(self):
         self.send_message(

@@ -4,3 +4,4 @@ from groups import *
 from invites import *
 from directories import *
 from files import *
+from editors import *

@@ -34,6 +34,5 @@ class Codes(object):
     DELETE_FILE = 'delete_file' #
     GET_FILE = 'get_file' #
 
-    ADD_EDITOR = 'add_editor'
-    REMOVE_EDITOR = 'remove_editor'
-    GET_EDITORS = 'get_editors'
+    ADD_EDITOR = 'add_editor' #
+    REMOVE_EDITOR = 'remove_editor' #
