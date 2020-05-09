@@ -55,12 +55,14 @@ def existing_group(func):
 
     return wrapper
 
+def directory_exists(directory_id):
+    directories = Directories.get(directory_id)
+    return True if directories else False
+
 def existing_directory(func):
     @functools.wraps(func)
     def wrapper(payload, *args, **kwargs):
-        directories = Directories.get(payload['directory'])
-
-        if not directories:
+        if not directory_exists(payload['directory']):
             return Message(
                 Codes.NOT_FOUND,
                 { 'message': 'A directory with this id was not found.' }
@@ -70,12 +72,14 @@ def existing_directory(func):
 
     return wrapper
 
+def file_exists(file_id):
+    files = Files.get(file_id)
+    return True if files else False
+
 def existing_file(func):
     @functools.wraps(func)
     def wrapper(payload, *args, **kwargs):
-        files = Files.get(payload['file'])
-
-        if not files:
+        if not file_exists(payload['file']):
             return Message(
                 Codes.NOT_FOUND,
                 { 'message': 'There is no file with this id.' }
