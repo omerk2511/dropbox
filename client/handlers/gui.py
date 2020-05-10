@@ -1,7 +1,9 @@
 from Tkinter import Tk, Frame
 
-WIDTH = 500
-HEIGHT = 300
+from ..views import Home
+
+WIDTH = 600
+HEIGHT = 320
 
 TITLE = 'Dropbox'
 
@@ -15,10 +17,10 @@ class GUI(Tk):
         self.title(TITLE)
 
         self.frames = {
-            
+            Home: Home(self)
         }
 
-        self.show_frame()
+        self.show_frame(Home)
 
     def show_frame(self, frame):
         self.frames[frame].grid(row=0, column=0, sticky='NSEW')
