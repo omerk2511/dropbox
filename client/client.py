@@ -1,5 +1,4 @@
-from gui import GUI
-from handlers import Connection, Client
+from handlers import GUI, Connection, Client
 
 HOST = ''
 PORT = 8000
