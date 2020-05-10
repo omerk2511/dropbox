@@ -6,5 +6,5 @@ class Client(object):
         # set everything up
 
     def run(self):
-        pass
+        self.gui.mainloop()
         #run main loop
