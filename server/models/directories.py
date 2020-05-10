@@ -1,4 +1,5 @@
 from initialization import initializer
+from files import Files
 from ..handlers.database import database
 
 class Directories(object):
@@ -69,7 +70,13 @@ class Directories(object):
             'name': root[1],
             'owner': root[2],
             'type': 'directory',
-            'files': []
+            'files': [
+                {
+                    'id': f[0],
+                    'name': f[2],
+                    'owner': f[3]
+                } for f in Files.get_directory_files(root[0])
+            ]
         }
 
         while len(directories) != 0:
@@ -92,7 +99,13 @@ class Directories(object):
                         'name': directories[0][1],
                         'owner': directories[0][2],
                         'type': 'directory',
-                        'files': []
+                        'files': [
+                            {
+                                'id': f[0],
+                                'name': f[2],
+                                'owner': f[3]
+                            } for f in Files.get_directory_files(directories[0][0])
+                        ]
                     }
                 )
 
