@@ -12,7 +12,7 @@ class Home(Frame):
         self.elements = {}
 
         title_frame = Frame(self)
-        title_frame.pack(expand=True, fill=BOTH, padx=70, pady=(40, 30))
+        title_frame.pack(expand=True, fill=BOTH, padx=70, pady=(50, 30))
 
         title_font = Font(root=self, family='Arial', size=34)
 

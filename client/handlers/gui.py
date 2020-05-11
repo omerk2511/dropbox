@@ -23,11 +23,25 @@ class GUI(Tk):
             SignUp: SignUp(self)
         }
 
+        self.frame_stack = []
         self.show_frame(Home)
+
+        self.bind('<Escape>', self.return_frame)
 
     def show_frame(self, frame):
         self.frames[frame].grid(row=0, column=0, sticky='NSEW')
         self.frames[frame].tkraise()
+
+        self.frame_stack.append(frame)
+
+    def return_frame(self, event):
+        if len(self.frame_stack) == 1:
+            return
+
+        frame = self.frame_stack[-2]
+        self.frame_stack = self.frame_stack[:-2]
+
+        self.show_frame(frame)
 
     def display_error(self, error_message):
         showerror('Error!', error_message)

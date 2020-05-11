@@ -12,7 +12,7 @@ class SignUp(Frame):
         self.elements = {}
 
         title_frame = Frame(self)
-        title_frame.pack(expand=True, fill=BOTH, padx=70, pady=(40, 20))
+        title_frame.pack(expand=True, fill=BOTH, padx=70, pady=(30, 20))
 
         title_font = Font(root=self, family='Arial', size=28)
 
