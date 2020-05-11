@@ -12,7 +12,7 @@ class LogIn(Frame):
         self.elements = {}
 
         title_frame = Frame(self)
-        title_frame.pack(expand=True, fill=BOTH, padx=70, pady=(50, 20))
+        title_frame.pack(expand=True, fill=BOTH, padx=70, pady=(40, 20))
 
         title_font = Font(root=self, family='Arial', size=28)
 
@@ -57,6 +57,10 @@ class LogIn(Frame):
 
         self.elements['username_entry'].delete(0, END)
         self.elements['password_entry'].delete(0, END)
+
+        if len(username) == 0 or len(password) == 0:
+            self.parent.display_error('You have to fill in all the fields.')
+            return
 
         try:
             response = LogInController.log_in(username, password)
