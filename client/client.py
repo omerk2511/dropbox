@@ -13,6 +13,7 @@ def main():
         gui.display_error('Could not connect to the server.')
         return
 
+    gui.initialize_frames()
     gui.mainloop()
 
 if __name__ == '__main__':

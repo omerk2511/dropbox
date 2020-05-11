@@ -20,6 +20,7 @@ class GUI(Tk):
 
         self.bind('<Escape>', self.return_frame)
 
+    def initialize_frames(self):
         self.frames = {
             Home: Home(self),
             Main: Main(self),
@@ -29,12 +30,19 @@ class GUI(Tk):
 
         self.frame_stack = []
 
+        Data().set_user_data()
+
         if Data().get_token():
             self.show_frame(Main)
         else:
             self.show_frame(Home)
 
     def show_frame(self, frame):
+        try:
+            self.frames[frame].initialize()
+        except:
+            pass
+
         self.frames[frame].grid(row=0, column=0, sticky='NSEW')
         self.frames[frame].tkraise()
 
