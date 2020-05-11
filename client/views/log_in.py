@@ -1,6 +1,9 @@
 from Tkinter import *
 from tkFont import *
 
+from common import Codes
+from ..controllers import LogInController
+
 class LogIn(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
@@ -54,3 +57,15 @@ class LogIn(Frame):
 
         self.elements['username_entry'].delete(0, END)
         self.elements['password_entry'].delete(0, END)
+
+        try:
+            response = LogInController.log_in(username, password)
+        except:
+            self.parent.display_error('Connection timed out.')
+            self.parent.quit()
+
+        if response.code == Codes.SUCCESS:
+            pass
+            # save token and switch frame
+        else:
+            self.parent.display_error(response.payload['message'])

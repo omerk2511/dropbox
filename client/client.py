@@ -1,6 +1,6 @@
 from handlers import GUI, Connection
 
-HOST = ''
+HOST = 'localhost'
 PORT = 8000
 
 def main():
