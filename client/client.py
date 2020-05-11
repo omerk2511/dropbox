@@ -1,14 +1,18 @@
-from handlers import GUI, Connection, Client
+from handlers import GUI, Connection
 
 HOST = ''
 PORT = 8000
 
 def main():
     gui = GUI()
-    connection = Connection(HOST, PORT)
+    
+    try:
+        connection = Connection(HOST, PORT)
+    except:
+        gui.display_error('Could not connect to the server.')
+        return
 
-    client = Client(gui, connection)
-    client.run()
+    gui.mainloop()
 
 if __name__ == '__main__':
     main()
