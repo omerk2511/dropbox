@@ -1,10 +1,11 @@
-from handlers import GUI, Connection
+from handlers import GUI, Data, Connection
 
 HOST = 'localhost'
 PORT = 8000
 
 def main():
     gui = GUI()
+    data = Data()
     
     try:
         connection = Connection(HOST, PORT)

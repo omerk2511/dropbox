@@ -82,7 +82,7 @@ class SignUp(Frame):
             return
 
         if response.code == Codes.SUCCESS:
-            pass
-            # switch frame
+            self.parent.display_info('Signed up successfully.')
+            self.parent.return_frame()
         else:
             self.parent.display_error(response.payload['message'])

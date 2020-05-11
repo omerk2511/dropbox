@@ -2,7 +2,9 @@ from Tkinter import *
 from tkFont import *
 
 from common import Codes
+from main import Main
 from ..controllers import LogInController
+from ..handlers.data import Data
 
 class LogIn(Frame):
     def __init__(self, parent):
@@ -69,7 +71,9 @@ class LogIn(Frame):
             self.parent.quit()
 
         if response.code == Codes.SUCCESS:
-            pass
-            # save token and switch frame
+            Data().set_token(response.payload['token'])
+            
+            self.parent.display_info('Logged in successfully.')
+            self.parent.set_root_frame(Main)
         else:
             self.parent.display_error(response.payload['message'])
