@@ -1,9 +1,13 @@
 from Tkinter import *
 from tkFont import *
 
+from log_in import LogIn
+from sign_up import SignUp
+
 class Home(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
+        self.parent = parent
 
         self.elements = {}
 
@@ -14,7 +18,7 @@ class Home(Frame):
 
         self.elements['title'] = Label(title_frame, text='Welcome to Dropbox!',
             fg='#003399', font=title_font)
-        self.elements['title'].pack(side=LEFT, padx=6)
+        self.elements['title'].pack(side=TOP, padx=6)
 
         buttons_frame = Frame(self)
         buttons_frame.pack(expand=True, fill=BOTH, padx=70, pady=(0, 10))
@@ -32,9 +36,7 @@ class Home(Frame):
         self.elements['sign_up_button'].pack(side=RIGHT, padx=6)
 
     def log_in(self):
-        pass
-        # self.elements['log_in_button'].configure(bg='#003d99')
+        self.parent.show_frame(LogIn)
 
     def sign_up(self):
-        pass
-        # self.elements['sign_up_button'].configure(bg='')
+        self.parent.show_frame(SignUp)

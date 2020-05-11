@@ -1,6 +1,6 @@
 from Tkinter import Tk, Frame
 
-from ..views import Home
+from ..views import Home, LogIn, SignUp
 
 WIDTH = 600
 HEIGHT = 320
@@ -17,7 +17,9 @@ class GUI(Tk):
         self.title(TITLE)
 
         self.frames = {
-            Home: Home(self)
+            Home: Home(self),
+            LogIn: LogIn(self),
+            SignUp: SignUp(self)
         }
 
         self.show_frame(Home)
