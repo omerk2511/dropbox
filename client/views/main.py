@@ -3,7 +3,7 @@ from tkFont import *
 from tkFileDialog import asksaveasfilename
 
 from ..handlers.data import Data
-from ..controllers import GroupDataController, FileDataController
+from ..controllers import GroupController, FileDataController
 
 class Main(Frame):
     def __init__(self, parent):
@@ -93,7 +93,7 @@ class Main(Frame):
         if selected_group_index == -1:
             self.selected_group = self.user_data
         else:
-            self.selected_group = GroupDataController.get_group_data(
+            self.selected_group = GroupController.get_group_data(
                 self.user_data['groups'][selected_group_index]['id'],
                 Data().get_token()).payload
 
@@ -318,4 +318,4 @@ class Main(Frame):
         self.parent.set_root_frame('home')
 
     def create_group(self):
-        pass
+        self.parent.show_frame('create_group')

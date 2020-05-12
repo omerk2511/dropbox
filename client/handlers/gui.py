@@ -2,7 +2,7 @@ from Tkinter import Tk, Frame, BOTH
 from tkMessageBox import showinfo, showerror
 
 from data import Data
-from ..views import Home, LogIn, SignUp, Main
+from ..views import *
 
 WIDTH = 600
 HEIGHT = 329
@@ -25,7 +25,8 @@ class GUI(Tk):
             'home': Home(self),
             'main': Main(self),
             'log_in': LogIn(self),
-            'sign_up': SignUp(self)
+            'sign_up': SignUp(self),
+            'create_group': CreateGroup(self)
         }
 
         self.frame_stack = []

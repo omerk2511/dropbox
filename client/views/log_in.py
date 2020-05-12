@@ -2,7 +2,6 @@ from Tkinter import *
 from tkFont import *
 
 from common import Codes
-from main import Main
 from ..controllers import LogInController
 from ..handlers.data import Data
 
