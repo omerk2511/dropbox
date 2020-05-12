@@ -104,7 +104,8 @@ class Directories(object):
                             {
                                 'id': f[0],
                                 'name': f[2],
-                                'owner': f[3]
+                                'owner': f[3],
+                                'type': 'file'
                             } for f in Files.get_directory_files(directories[0][0])
                         ]
                     }

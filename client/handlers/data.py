@@ -24,6 +24,64 @@ class Data(object):
     def get_user_data(self):
         return self.user_data
 
+    def get_file_info(self, group, file_id):
+        files = [group['files']]
+        
+        while files:
+            if files[0]['type'] == 'directory':
+                files += files[0]['files']
+            else:
+                if files[0]['id'] == file_id:
+                    f = files[0].copy()
+                    
+                    if 'users' in group:
+                        owner = [user for user in group['users'] if user['id'] == f['owner']][0]
+
+                        f['owner'] = {
+                            'id': owner['id'],
+                            'username': owner['username'],
+                            'full_name': owner['full_name']
+                        }
+                    else:
+                        f['owner'] = {
+                            'id': group['id'],
+                            'username': group['username'],
+                            'full_name': group['full_name']
+                        }
+
+                    return f
+
+            files = files[1:]
+
+    def get_directory_info(self, group, directory_id):
+        files = [group['files']]
+        
+        while files:
+            if files[0]['type'] == 'directory':
+                if files[0]['id'] == directory_id:
+                    directory = files[0].copy()
+
+                    if 'users' in group:
+                        owner = [user for user in group['users'] if user['id'] == directory['owner']][0]
+
+                        directory['owner'] = {
+                            'id': owner['id'],
+                            'username': owner['username'],
+                            'full_name': owner['full_name']
+                        }
+                    else:
+                        directory['owner'] = {
+                            'id': group['id'],
+                            'username': group['username'],
+                            'full_name': group['full_name']
+                        }
+
+                    return directory
+
+                files += files[0]['files']
+
+            files = files[1:]
+
     def set_user_data(self):
         if self.token:
             try:
