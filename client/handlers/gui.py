@@ -1,11 +1,11 @@
-from Tkinter import Tk, Frame
+from Tkinter import Tk, Frame, BOTH
 from tkMessageBox import showinfo, showerror
 
 from data import Data
 from ..views import Home, LogIn, SignUp, Main
 
 WIDTH = 600
-HEIGHT = 320
+HEIGHT = 329
 
 TITLE = 'Dropbox'
 
@@ -14,7 +14,7 @@ class GUI(Tk):
         Tk.__init__(self, *args, **kwargs)
 
         self.geometry('%dx%d' % (WIDTH, HEIGHT))
-        self.resizable(False, False)
+        self.minsize(WIDTH, HEIGHT)
 
         self.title(TITLE)
 
@@ -22,10 +22,10 @@ class GUI(Tk):
 
     def initialize_frames(self):
         self.frames = {
-            Home: Home(self),
-            Main: Main(self),
-            LogIn: LogIn(self),
-            SignUp: SignUp(self)
+            'home': Home(self),
+            'main': Main(self),
+            'log_in': LogIn(self),
+            'sign_up': SignUp(self)
         }
 
         self.frame_stack = []
@@ -33,28 +33,36 @@ class GUI(Tk):
         Data().set_user_data()
 
         if Data().get_token():
-            self.show_frame(Main)
+            self.show_frame('main')
         else:
-            self.show_frame(Home)
+            self.show_frame('home')
 
     def show_frame(self, frame):
+        if self.frame_stack:
+            self.frames[self.frame_stack[-1]].pack_forget()
+
         try:
             self.frames[frame].initialize()
         except:
             pass
 
-        self.frames[frame].grid(row=0, column=0, sticky='NSEW')
+        self.frames[frame].pack(expand=False, fill=BOTH)
         self.frames[frame].tkraise()
 
         self.frame_stack.append(frame)
 
     def set_root_frame(self, frame):
+        if self.frame_stack:
+            self.frames[self.frame_stack[-1]].pack_forget()
+
         self.frame_stack = []
         self.show_frame(frame)
 
     def return_frame(self, event=None):
         if len(self.frame_stack) == 1:
             return
+
+        self.frames[self.frame_stack[-1]].pack_forget()
 
         frame = self.frame_stack[-2]
         self.frame_stack = self.frame_stack[:-2]

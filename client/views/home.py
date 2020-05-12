@@ -1,9 +1,6 @@
 from Tkinter import *
 from tkFont import *
 
-from log_in import LogIn
-from sign_up import SignUp
-
 class Home(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
@@ -27,16 +24,16 @@ class Home(Frame):
 
         self.elements['log_in_button'] = Button(buttons_frame, text='LOG IN',
             bg='#003399', activebackground='#002266', fg='#ffffff', font=buttons_font,
-            activeforeground='#ffffff', width=12, height=3, command=self.log_in)
-        self.elements['log_in_button'].pack(side=LEFT, padx=6)
+            activeforeground='#ffffff', command=self.log_in)
+        self.elements['log_in_button'].pack(side=LEFT, padx=6, expand=True, fill=BOTH)
 
         self.elements['sign_up_button'] = Button(buttons_frame, text='SIGN UP',
             bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=buttons_font,
-            activeforeground='#003399', width=12, height=3, command=self.sign_up)
-        self.elements['sign_up_button'].pack(side=RIGHT, padx=6)
+            activeforeground='#003399', command=self.sign_up)
+        self.elements['sign_up_button'].pack(side=RIGHT, padx=6, expand=True, fill=BOTH)
 
     def log_in(self):
-        self.parent.show_frame(LogIn)
+        self.parent.show_frame('log_in')
 
     def sign_up(self):
-        self.parent.show_frame(SignUp)
+        self.parent.show_frame('sign_up')

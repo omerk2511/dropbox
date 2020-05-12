@@ -74,6 +74,6 @@ class LogIn(Frame):
             Data().set_token(response.payload['token'])
             
             self.parent.display_info('Logged in successfully.')
-            self.parent.set_root_frame(Main)
+            self.parent.set_root_frame('main')
         else:
             self.parent.display_error(response.payload['message'])
