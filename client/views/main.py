@@ -175,9 +175,6 @@ class Main(Frame):
 
         self.elements['delete_button'].pack_forget()
 
-        self.current_file = None
-        self.current_directory = None
-
         if file_id:
             self.current_file = file_id
 
@@ -194,19 +191,29 @@ class Main(Frame):
                 self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         if directory_id:
-            self.current_directory = directory_id
-
             self.currently_selected_file = self.elements['directory_label_' + str(directory_id)]
-            directory_info = Data().get_directory_info(group, directory_id)
 
-            self.elements['current_file_name_label']['text'] = directory_info['name']
-            self.elements['current_file_type_label']['text'] = 'Type: ' + directory_info['type']
-            self.elements['current_file_owner_label']['text'] = 'Owner: ' + directory_info['owner']['full_name']
+            if directory_id == -1:
+                self.elements['current_file_name_label']['text'] = ''
+                self.elements['current_file_type_label']['text'] = ''
+                self.elements['current_file_owner_label']['text'] = ''
 
-            self.elements['download_file_button'].pack_forget()
+                self.elements['download_file_button'].pack_forget()
+                self.elements['delete_button'].pack_forget()
+            else:
+                self.current_file = None
+                self.current_directory = directory_id
 
-            if directory_info['owner']['id'] == Data().get_user_data()['id']:
-                self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+                directory_info = Data().get_directory_info(group, directory_id)
+
+                self.elements['current_file_name_label']['text'] = directory_info['name']
+                self.elements['current_file_type_label']['text'] = 'Type: ' + directory_info['type']
+                self.elements['current_file_owner_label']['text'] = 'Owner: ' + directory_info['owner']['full_name']
+
+                self.elements['download_file_button'].pack_forget()
+
+                if directory_info['owner']['id'] == Data().get_user_data()['id']:
+                    self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         self.currently_selected_file['bg'] = 'gray'
 
@@ -250,17 +257,38 @@ class Main(Frame):
         root_directory = None
         
         directories = self.selected_group['files']['files']
+        
+        if directory_id == -1:
+            if self.current_directory in [f['id'] for f
+                in directories if f['type'] == 'directory']:
+                root_directory = self.selected_group['files']
 
-        while directories and not root_directory:            
-            if directories[0]['type'] == 'directory':
-                if directories[0]['id'] == directory_id:
-                    root_directory = directories[0]
+            while directories and not root_directory:            
+                if directories[0]['type'] == 'directory':
+                    if self.current_directory in [f['id'] for
+                        f in directories[0]['files'] if f['type'] == 'directory']:
+                        root_directory = directories[0]
 
-                directories += directories[0]['files']
-            
-            directories = directories[1:]
+                    directories += directories[0]['files']
+                
+                directories = directories[1:]
+        else:
+            while directories and not root_directory:            
+                if directories[0]['type'] == 'directory':
+                    if directories[0]['id'] == directory_id:
+                        root_directory = directories[0]
 
-        directories = []
+                    directories += directories[0]['files']
+                
+                directories = directories[1:]
+
+        if root_directory == self.selected_group['files']:
+            directories = []
+        else:
+            directories = [
+                { 'name': '../', 'id': -1 }
+            ]
+
         files = []
 
         for f in root_directory['files']:
@@ -292,6 +320,7 @@ class Main(Frame):
             self.elements['file_label_' + str(f['id'])] = file_label
 
         self.currently_selected_file = None
+        self.current_directory = root_directory['id']
 
     def generate_select_directory(self, group, directory_id):
         return lambda e: self.select_directory(group, directory_id)
@@ -329,8 +358,7 @@ class Main(Frame):
                 self.select_group()
             else:
                 self.parent.display_error(response.payload['message'])
-
-        if self.current_directory:
+        elif self.current_directory:
             print 'delete directory', self.current_directory
 
     def log_out(self):
