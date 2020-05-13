@@ -4,8 +4,8 @@ from tkMessageBox import showinfo, showerror
 from data import Data
 from ..views import *
 
-WIDTH = 600
-HEIGHT = 329
+WIDTH = 1200
+HEIGHT = 790
 
 TITLE = 'Dropbox'
 

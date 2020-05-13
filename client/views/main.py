@@ -1,5 +1,4 @@
 from Tkinter import *
-from tkFont import *
 from tkFileDialog import asksaveasfilename, askopenfilename
 
 from common import Codes
@@ -45,23 +44,19 @@ class Main(Frame):
 
         # LOGO
 
-        title_font = Font(root=self, family='Arial', size=22)
-
         self.elements['title'] = Label(top_frame, text='Dropbox - ' + self.user_data['username'],
-            padx=10, pady=10, fg='#ffffff', bg='#003399', font=title_font)
+            padx=10, pady=10, fg='#ffffff', bg='#003399', font=('Arial', 22))
         self.elements['title'].pack(side=LEFT)
         self.elements['title'].pack_propagate(False)
 
-        buttons_font = Font(root=self, family='Arial', size=18)
-
         self.elements['log_out_button'] = Button(top_frame, text='Log Out',
-            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=buttons_font,
+            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=('Arial', 18),
             activeforeground='#003399', relief=GROOVE, command=self.log_out)
         self.elements['log_out_button'].pack(side=RIGHT, fill=Y)
         self.elements['log_out_button'].pack_propagate(False)
 
         self.elements['settings_button'] = Button(top_frame, text='Settings',
-            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=buttons_font,
+            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=('Arial', 18),
             activeforeground='#003399', relief=GROOVE, command=None)
         self.elements['settings_button'].pack(side=RIGHT, fill=Y)
         self.elements['settings_button'].pack_propagate(False)
@@ -70,22 +65,18 @@ class Main(Frame):
         groups_frame.grid(row=1, sticky='NWS')
         groups_frame.grid_propagate(False)
 
-        listbox_font = Font(root=self, family='Arial', size=14)
-
         self.elements['groups_listbox'] = Listbox(groups_frame, selectmode=SINGLE, bd=0,
-            highlightthickness=0, selectbackground='#333333', font=listbox_font,
-            width=15, activestyle='none')
+            highlightthickness=0, selectbackground='#333333', font=('Arial', 14),
+            width=25, height=30, activestyle='none')
         self.elements['groups_listbox'].bind('<<ListboxSelect>>', self.select_group)
         self.elements['groups_listbox'].pack(side=TOP, expand=False)
 
         for group in ['Personal'] + [group['name'] for group in self.user_data['groups']]:
             self.elements['groups_listbox'].insert(END, group)
 
-        create_group_button_font = Font(root=self, family='Arial', size=16)
-
         self.elements['create_group_button'] = Button(groups_frame, text='Create Group',
             bg='#003399', activebackground='#002266', fg='#ffffff', relief=FLAT,
-            activeforeground='#ffffff', font=create_group_button_font,
+            activeforeground='#ffffff', font=('Arial', 16),
             command=self.create_group)
         self.elements['create_group_button'].pack(side=BOTTOM, expand=True, fill=BOTH)
 
@@ -114,44 +105,36 @@ class Main(Frame):
         self.elements['current_file_frame'] = Frame(self.elements['files_frame'], bg='#ffffff')
         self.elements['current_file_frame'].pack(side=RIGHT, expand=False, fill=Y)
 
-        file_name_font = Font(root=self, family='Arial', size=14)
-
         self.elements['current_file_name_label'] = Label(self.elements['current_file_frame'],
-            text='', bg='#ffffff', anchor='n', font=file_name_font)
+            text='', bg='#ffffff', anchor='n', font=('Arial', 14))
         self.elements['current_file_name_label'].pack(side=TOP, expand=False, fill=X, padx=35, pady=5)
-        
-        file_data_font = Font(root=self, family='Arial', size=12)
 
         self.elements['current_file_type_label'] = Label(self.elements['current_file_frame'],
-            text='', bg='#ffffff', anchor='n', font=file_data_font)
+            text='', bg='#ffffff', anchor='n', font=('Arial', 12))
         self.elements['current_file_type_label'].pack(side=TOP, expand=False, fill=X, padx=10, pady=1)
 
         self.elements['current_file_owner_label'] = Label(self.elements['current_file_frame'],
-            text='', bg='#ffffff', anchor='n', font=file_data_font)
+            text='', bg='#ffffff', anchor='n', font=('Arial', 12))
         self.elements['current_file_owner_label'].pack(side=TOP, expand=False, fill=X, padx=10, pady=1)
 
         self.elements['download_file_button'] = Button(self.elements['current_file_frame'],
-            text='Download File', font=file_name_font, command=self.download_file)
+            text='Download File', font=('Arial', 14), command=self.download_file)
 
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
-            text='Delete', font=file_name_font, command=self.delete_file)
-
-        file_button_font = Font(root=self, family='Arial', size=16)
+            text='Delete', font=('Arial', 14), command=self.delete_file)
 
         self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
 
         self.elements['create_file_button'] = Button(self.elements['file_buttons_frame'],
-            text='Create File', font=file_button_font, command=self.create_file, bg='#ffffff',
+            text='Create File', font=('Arial', 16), command=self.create_file, bg='#ffffff',
             activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
         self.elements['create_file_button'].pack(side=LEFT, expand=True, fill=X)
 
         self.elements['create_directory_button'] = Button(self.elements['file_buttons_frame'],
-            text='Create Directory', font=file_button_font, command=self.create_directory,
+            text='Create Directory', font=('Arial', 16), command=self.create_directory,
             bg='#ffffff', activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
         self.elements['create_directory_button'].pack(side=RIGHT, expand=True, fill=X)
-
-        files_font = Font(root=self, family='Arial', size=14)
 
         root_directory = self.selected_group['files']
         self.shown_directory = root_directory['id']
@@ -167,7 +150,7 @@ class Main(Frame):
 
         for directory in directories:
             directory_label = Label(self.elements['files_frame'], text=directory['name'],
-                anchor='w', font=files_font)
+                anchor='w', font=('Arial', 14))
             directory_label.pack(side=TOP, expand=False, fill=BOTH, padx=6, pady=(3, 1))
 
             directory_label.bind('<Button-1>',
@@ -179,7 +162,7 @@ class Main(Frame):
 
         for f in files:
             file_label = Label(self.elements['files_frame'], text=f['name'],
-                anchor='w', font=files_font)
+                anchor='w', font=('Arial', 14))
             file_label.pack(side=TOP, fill=BOTH, expand=False, padx=6, pady=(3, 1))
 
             file_label.bind('<Button-1>',
@@ -202,7 +185,8 @@ class Main(Frame):
             self.currently_selected_file = self.elements['file_label_' + str(file_id)]
             file_info = Data().get_file_info(group, file_id)
 
-            self.elements['current_file_name_label']['text'] = file_info['name']
+            self.elements['current_file_name_label']['text'] = (file_info['name'] if
+                len(file_info['name']) < 14 else file_info['name'][:11] + '...')
             self.elements['current_file_type_label']['text'] = 'Type: ' + file_info['type']
             self.elements['current_file_owner_label']['text'] = 'Owner: ' + file_info['owner']['full_name']
             
@@ -227,7 +211,8 @@ class Main(Frame):
 
                 directory_info = Data().get_directory_info(group, directory_id)
 
-                self.elements['current_file_name_label']['text'] = directory_info['name']
+                self.elements['current_file_name_label']['text'] = (directory_info['name']
+                    if len(directory_info['name']) < 14 else directory_info['name'][:11] + '...')
                 self.elements['current_file_type_label']['text'] = 'Type: ' + directory_info['type']
                 self.elements['current_file_owner_label']['text'] = 'Owner: ' + directory_info['owner']['full_name']
 
@@ -251,49 +236,44 @@ class Main(Frame):
         self.elements['current_file_frame'] = Frame(self.elements['files_frame'], bg='#ffffff')
         self.elements['current_file_frame'].pack(side=RIGHT, expand=False, fill=Y)
 
-        file_name_font = Font(root=self, family='Arial', size=14)
-
         self.elements['current_file_name_label'] = Label(self.elements['current_file_frame'],
-            text='', bg='#ffffff', anchor='n', font=file_name_font)
+            text='', bg='#ffffff', anchor='n', font=('Arial', 14))
         self.elements['current_file_name_label'].pack(side=TOP, expand=False, fill=X, padx=35, pady=5)
         
-        file_data_font = Font(root=self, family='Arial', size=12)
-
         self.elements['current_file_type_label'] = Label(self.elements['current_file_frame'],
-            text='', bg='#ffffff', anchor='n', font=file_data_font)
+            text='', bg='#ffffff', anchor='n', font=('Arial', 12))
         self.elements['current_file_type_label'].pack(side=TOP, expand=False, fill=X, padx=10, pady=1)
 
         self.elements['current_file_owner_label'] = Label(self.elements['current_file_frame'],
-            text='', bg='#ffffff', anchor='n', font=file_data_font)
+            text='', bg='#ffffff', anchor='n', font=('Arial', 12))
         self.elements['current_file_owner_label'].pack(side=TOP, expand=False, fill=X, padx=10, pady=1)
 
         self.elements['download_file_button'] = Button(self.elements['current_file_frame'],
-            text='Download File', font=file_name_font, command=self.download_file)
+            text='Download File', font=('Arial', 14), command=self.download_file)
 
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
-            text='Delete', font=file_name_font, command=self.delete_file)
-
-        file_button_font = Font(root=self, family='Arial', size=16)
+            text='Delete', font=('Arial', 14), command=self.delete_file)
 
         self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
 
         self.elements['create_file_button'] = Button(self.elements['file_buttons_frame'],
-            text='Create File', font=file_button_font, command=self.create_file, bg='#ffffff',
+            text='Create File', font=('Arial', 16), command=self.create_file, bg='#ffffff',
             activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
         self.elements['create_file_button'].pack(side=LEFT, expand=True, fill=X)
 
         self.elements['create_directory_button'] = Button(self.elements['file_buttons_frame'],
-            text='Create Directory', font=file_button_font, command=self.create_directory,
+            text='Create Directory', font=('Arial', 16), command=self.create_directory,
             bg='#ffffff', activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
         self.elements['create_directory_button'].pack(side=RIGHT, expand=True, fill=X)
-
-        files_font = Font(root=self, family='Arial', size=14)
 
         root_directory = None
         
         directories = self.selected_group['files']['files']
         
+        if directory_id == self.selected_group['files']['id']:
+            root_directory = self.selected_group['files']
+
         if directory_id == -1:
             if self.current_directory in [f['id'] for f
                 in directories if f['type'] == 'directory']:
@@ -337,7 +317,7 @@ class Main(Frame):
 
         for directory in directories:
             directory_label = Label(self.elements['files_frame'], text=directory['name'],
-                anchor='w', font=files_font)
+                anchor='w', font=('Arial', 14))
             directory_label.pack(side=TOP, expand=False, fill=BOTH, padx=6, pady=(3, 1))
 
             directory_label.bind('<Button-1>',
@@ -349,7 +329,7 @@ class Main(Frame):
 
         for f in files:
             file_label = Label(self.elements['files_frame'], text=f['name'],
-                anchor='w', font=files_font)
+                anchor='w', font=('Arial', 14))
             file_label.pack(side=TOP, fill=BOTH, expand=False, padx=6, pady=(3, 1))
 
             file_label.bind('<Button-1>',
