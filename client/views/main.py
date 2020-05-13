@@ -2,8 +2,9 @@ from Tkinter import *
 from tkFont import *
 from tkFileDialog import asksaveasfilename
 
+from common import Codes
 from ..handlers.data import Data
-from ..controllers import GroupController, FileDataController
+from ..controllers import GroupController, FileController
 
 class Main(Frame):
     def __init__(self, parent):
@@ -11,6 +12,9 @@ class Main(Frame):
         self.parent = parent
 
         self.elements = {}
+
+        self.current_file = None
+        self.current_directory = None
 
     def initialize(self):
         Data().set_user_data()
@@ -171,6 +175,9 @@ class Main(Frame):
 
         self.elements['delete_button'].pack_forget()
 
+        self.current_file = None
+        self.current_directory = None
+
         if file_id:
             self.current_file = file_id
 
@@ -187,6 +194,8 @@ class Main(Frame):
                 self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         if directory_id:
+            self.current_directory = directory_id
+
             self.currently_selected_file = self.elements['directory_label_' + str(directory_id)]
             directory_info = Data().get_directory_info(group, directory_id)
 
@@ -234,7 +243,7 @@ class Main(Frame):
             text='Download File', font=file_name_font, command=self.download_file)
 
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
-            text='Delete File', font=file_name_font, command=self.delete_file)
+            text='Delete', font=file_name_font, command=self.delete_file)
 
         files_font = Font(root=self, family='Arial', size=14)
 
@@ -289,7 +298,7 @@ class Main(Frame):
 
     def download_file(self):
         if self.current_file:
-            file_extension = FileDataController.get_file_extension(
+            file_extension = FileController.get_file_extension(
                 self.current_file, Data().get_token())
 
             if file_extension:
@@ -302,7 +311,7 @@ class Main(Frame):
                 if not file_name.endswith('.' + file_extension):
                     file_name += '.' + file_extension
 
-                content = FileDataController.get_file_content(
+                content = FileController.get_file_content(
                     self.current_file, Data().get_token())
 
                 with open(file_name, 'wb') as f:
@@ -311,7 +320,18 @@ class Main(Frame):
                 self.parent.display_info('File downloaded successfully!')
 
     def delete_file(self):
-        pass
+        if self.current_file:
+            response = FileController.delete_file(self.current_file,
+                Data().get_token())
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('The file was deleted successfully!')
+                self.select_group()
+            else:
+                self.parent.display_error(response.payload['message'])
+
+        if self.current_directory:
+            print 'delete directory', self.current_directory
 
     def log_out(self):
         Data().set_token('')
