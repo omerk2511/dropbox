@@ -87,6 +87,8 @@ class Directories(object):
         root = [directory for directory in directories if directory[4] == None][0]
         directories = [directory for directory in directories if directory[4] != None]
 
+        print root, directories
+
         tree = {
             'id': root[0],
             'name': root[1],
@@ -109,13 +111,13 @@ class Directories(object):
             tree_stack = [tree]
 
             while not parent_node and len(tree_stack) > 0:
-                if tree_stack[0]['id'] == parent:
-                    parent_node = tree_stack[0]
-                else:
-                    if tree_stack[0]['type'] == 'directory':
+                if tree_stack[0]['type'] == 'directory':
+                    if tree_stack[0]['id'] == parent:
+                        parent_node = tree_stack[0]
+                    else:
                         tree_stack += tree_stack[0]['files']
                     
-                    tree_stack = tree_stack[1:]
+                tree_stack = tree_stack[1:]
 
             if parent_node:
                 parent_node['files'].append(

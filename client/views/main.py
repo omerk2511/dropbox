@@ -93,7 +93,7 @@ class Main(Frame):
         if selected_group_index == -1:
             Data().set_user_data()
             self.user_data = Data().get_user_data()
-            
+
             self.selected_group = self.user_data
         else:
             self.selected_group = GroupController.get_group_data(
@@ -133,7 +133,7 @@ class Main(Frame):
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
 
         self.elements['create_file_button'] = Button(self.elements['file_buttons_frame'],
-            text='Create File', font=('Arial', 16), command=self.create_file, bg='#ffffff',
+            text='Upload File', font=('Arial', 16), command=self.create_file, bg='#ffffff',
             activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
         self.elements['create_file_button'].pack(side=LEFT, expand=True, fill=X)
 
@@ -266,7 +266,7 @@ class Main(Frame):
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
 
         self.elements['create_file_button'] = Button(self.elements['file_buttons_frame'],
-            text='Create File', font=('Arial', 16), command=self.create_file, bg='#ffffff',
+            text='Upload File', font=('Arial', 16), command=self.create_file, bg='#ffffff',
             activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
         self.elements['create_file_button'].pack(side=LEFT, expand=True, fill=X)
 
@@ -382,12 +382,16 @@ class Main(Frame):
 
     def delete_file(self):
         if self.current_file:
+            file_directory = self.shown_directory
+
             response = FileController.delete_file(self.current_file,
                 Data().get_token())
 
             if response.code == Codes.SUCCESS:
                 self.parent.display_info('The file was deleted successfully!')
+
                 self.select_group()
+                self.select_directory(file_directory)
             else:
                 self.parent.display_error(response.payload['message'])
         elif self.current_directory:
@@ -405,7 +409,7 @@ class Main(Frame):
                     f.read(), Data().get_token())
 
                 if response.code == Codes.SUCCESS:
-                    self.parent.display_info('The file was successfully created!')
+                    self.parent.display_info('The file was successfully uploaded!')
 
                     self.select_group()
                     self.select_directory(file_directory)
