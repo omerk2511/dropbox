@@ -40,6 +40,17 @@ class Directories(object):
         )
 
     @staticmethod
+    def get_user_directories_under_parent(user_id, parent):
+        return database.fetch(
+            '''
+            SELECT * FROM directories d
+            LEFT JOIN users u ON d.owner = u.id
+            WHERE u.id = ? AND d.parent = ? AND d.`group` IS NULL
+            ''',
+            (user_id, parent)
+        )
+
+    @staticmethod
     def get_group_directories(group_id):
         return database.fetch(
             '''
@@ -48,6 +59,17 @@ class Directories(object):
             WHERE g.id = ?
             ''',
             (group_id,)
+        )
+
+    @staticmethod
+    def get_group_directories_under_parent(group_id, parent):
+        return database.fetch(
+            '''
+            SELECT * FROM directories d
+            LEFT JOIN groups g ON d.`group` = g.id
+            WHERE g.id = ? AND d.parent = ?
+            ''',
+            (group_id, parent)
         )
 
     @staticmethod

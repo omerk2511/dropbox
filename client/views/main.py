@@ -1,9 +1,10 @@
 from Tkinter import *
+from tkSimpleDialog import askstring
 from tkFileDialog import asksaveasfilename, askopenfilename
 
 from common import Codes
 from ..handlers.data import Data
-from ..controllers import GroupController, FileController
+from ..controllers import GroupController, FileController, DirectoryController
 
 class Main(Frame):
     def __init__(self, parent):
@@ -90,6 +91,9 @@ class Main(Frame):
         selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
 
         if selected_group_index == -1:
+            Data().set_user_data()
+            self.user_data = Data().get_user_data()
+            
             self.selected_group = self.user_data
         else:
             self.selected_group = GroupController.get_group_data(
@@ -102,8 +106,10 @@ class Main(Frame):
         self.elements['files_frame'] = Frame(self)
         self.elements['files_frame'].grid(row=1, column=1, sticky='NEWS')
 
-        self.elements['current_file_frame'] = Frame(self.elements['files_frame'], bg='#ffffff')
+        self.elements['current_file_frame'] = Frame(self.elements['files_frame'],
+            width=250, bg='#ffffff')
         self.elements['current_file_frame'].pack(side=RIGHT, expand=False, fill=Y)
+        self.elements['current_file_frame'].pack_propagate(False)
 
         self.elements['current_file_name_label'] = Label(self.elements['current_file_frame'],
             text='', bg='#ffffff', anchor='n', font=('Arial', 14))
@@ -233,8 +239,10 @@ class Main(Frame):
         self.elements['files_frame'] = Frame(self)
         self.elements['files_frame'].grid(row=1, column=1, sticky='NEWS')
 
-        self.elements['current_file_frame'] = Frame(self.elements['files_frame'], bg='#ffffff')
+        self.elements['current_file_frame'] = Frame(self.elements['files_frame'],
+            width=250, bg='#ffffff')
         self.elements['current_file_frame'].pack(side=RIGHT, expand=False, fill=Y)
+        self.elements['current_file_frame'].pack_propagate(False)
 
         self.elements['current_file_name_label'] = Label(self.elements['current_file_frame'],
             text='', bg='#ffffff', anchor='n', font=('Arial', 14))
@@ -405,7 +413,35 @@ class Main(Frame):
                     self.parent.display_error(response.payload['message'])
 
     def create_directory(self):
-        print 'create directory in', self.shown_directory
+        directory_name = askstring('Required Input',
+            'Enter a name for the directory:', parent=self)
+
+        if directory_name:
+            if not directory_name.endswith('/'):
+                directory_name += '/'
+
+            parent = self.shown_directory
+
+            selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
+
+            if selected_group_index == -1:
+                response = DirectoryController.create_directory(directory_name,
+                    parent, Data().get_token())
+            else:
+                group_id = self.user_data['groups'][selected_group_index]['id']
+
+                response = DirectoryController.create_directory(directory_name,
+                    parent, Data().get_token(), group_id)
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('Created a directory successfully!')
+
+                self.select_group()
+                self.select_directory(parent)
+            else:
+                self.parent.display_error(response.payload['message'])
+        else:
+            self.parent.display_error('You have to give the directory a name!')
 
     def log_out(self):
         Data().set_token('')
