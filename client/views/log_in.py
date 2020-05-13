@@ -65,14 +65,14 @@ class LogIn(Frame):
 
         try:
             response = LogInController.log_in(username, password)
+
+            if response.code == Codes.SUCCESS:
+                Data().set_token(response.payload['token'])
+                
+                self.parent.display_info('Logged in successfully.')
+                self.parent.set_root_frame('main')
+            else:
+                self.parent.display_error(response.payload['message'])
         except:
             self.parent.display_error('Connection timed out.')
             self.parent.quit()
-
-        if response.code == Codes.SUCCESS:
-            Data().set_token(response.payload['token'])
-            
-            self.parent.display_info('Logged in successfully.')
-            self.parent.set_root_frame('main')
-        else:
-            self.parent.display_error(response.payload['message'])

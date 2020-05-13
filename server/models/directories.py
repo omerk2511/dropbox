@@ -90,7 +90,9 @@ class Directories(object):
                 if tree_stack[0]['id'] == parent:
                     parent_node = tree_stack[0]
                 else:
-                    tree_stack += tree_stack[0]['files']
+                    if tree_stack[0]['type'] == 'directory':
+                        tree_stack += tree_stack[0]['files']
+                    
                     tree_stack = tree_stack[1:]
 
             if parent_node:

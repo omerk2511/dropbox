@@ -18,23 +18,18 @@ class FileController(object):
             ).payload['content'])
 
     @staticmethod
-    def get_file_extension(file_id, token):
-        file_data = Connection().send_recieve(
+    def create_file(name, directory, content, token):
+        return Connection().send_recieve(
             Message(
-                Codes.GET_FILE,
+                Codes.CREATE_FILE,
                 {
                     'token': token,
-                    'file': file_id
+                    'name': name,
+                    'directory': directory,
+                    'content': base64.b64encode(content)
                 }
             )
-        ).payload
-
-        splitted_file_name = file_data['name'].split('.')
-
-        if len(splitted_file_name) > 1:
-            return splitted_file_name[-1]
-
-        return None
+        )
 
     @staticmethod
     def delete_file(file_id, token):

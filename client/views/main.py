@@ -1,6 +1,6 @@
 from Tkinter import *
 from tkFont import *
-from tkFileDialog import asksaveasfilename
+from tkFileDialog import asksaveasfilename, askopenfilename
 
 from common import Codes
 from ..handlers.data import Data
@@ -50,6 +50,7 @@ class Main(Frame):
         self.elements['title'] = Label(top_frame, text='Dropbox - ' + self.user_data['username'],
             padx=10, pady=10, fg='#ffffff', bg='#003399', font=title_font)
         self.elements['title'].pack(side=LEFT)
+        self.elements['title'].pack_propagate(False)
 
         buttons_font = Font(root=self, family='Arial', size=18)
 
@@ -57,14 +58,17 @@ class Main(Frame):
             bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=buttons_font,
             activeforeground='#003399', relief=GROOVE, command=self.log_out)
         self.elements['log_out_button'].pack(side=RIGHT, fill=Y)
+        self.elements['log_out_button'].pack_propagate(False)
 
         self.elements['settings_button'] = Button(top_frame, text='Settings',
             bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=buttons_font,
             activeforeground='#003399', relief=GROOVE, command=None)
         self.elements['settings_button'].pack(side=RIGHT, fill=Y)
+        self.elements['settings_button'].pack_propagate(False)
 
         groups_frame = Frame(self)
         groups_frame.grid(row=1, sticky='NWS')
+        groups_frame.grid_propagate(False)
 
         listbox_font = Font(root=self, family='Arial', size=14)
 
@@ -132,9 +136,25 @@ class Main(Frame):
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=file_name_font, command=self.delete_file)
 
+        file_button_font = Font(root=self, family='Arial', size=16)
+
+        self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
+        self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
+
+        self.elements['create_file_button'] = Button(self.elements['file_buttons_frame'],
+            text='Create File', font=file_button_font, command=self.create_file, bg='#ffffff',
+            activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
+        self.elements['create_file_button'].pack(side=LEFT, expand=True, fill=X)
+
+        self.elements['create_directory_button'] = Button(self.elements['file_buttons_frame'],
+            text='Create Directory', font=file_button_font, command=self.create_directory,
+            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
+        self.elements['create_directory_button'].pack(side=RIGHT, expand=True, fill=X)
+
         files_font = Font(root=self, family='Arial', size=14)
 
         root_directory = self.selected_group['files']
+        self.shown_directory = root_directory['id']
 
         directories = []
         files = []
@@ -153,7 +173,7 @@ class Main(Frame):
             directory_label.bind('<Button-1>',
                 self.generate_select_file(self.selected_group, directory_id=directory['id']))
             directory_label.bind('<Double-Button-1>',
-                self.generate_select_directory(self.selected_group, directory_id=directory['id']))
+                self.generate_select_directory(directory_id=directory['id']))
 
             self.elements['directory_label_' + str(directory['id'])] = directory_label
 
@@ -164,6 +184,7 @@ class Main(Frame):
 
             file_label.bind('<Button-1>',
                 self.generate_select_file(self.selected_group, file_id=f['id']))
+            file_label.bind('<Double-Button-1>', self.download_file)
 
             self.elements['file_label_' + str(f['id'])] = file_label
 
@@ -220,7 +241,7 @@ class Main(Frame):
     def generate_select_file(self, group, file_id=None, directory_id=None):
         return lambda e: self.select_file(group, file_id, directory_id)
 
-    def select_directory(self, group, directory_id):
+    def select_directory(self, directory_id):
         self.elements['files_frame'].grid_forget()
         self.elements['files_frame'].destroy()
 
@@ -252,6 +273,21 @@ class Main(Frame):
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=file_name_font, command=self.delete_file)
 
+        file_button_font = Font(root=self, family='Arial', size=16)
+
+        self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
+        self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
+
+        self.elements['create_file_button'] = Button(self.elements['file_buttons_frame'],
+            text='Create File', font=file_button_font, command=self.create_file, bg='#ffffff',
+            activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
+        self.elements['create_file_button'].pack(side=LEFT, expand=True, fill=X)
+
+        self.elements['create_directory_button'] = Button(self.elements['file_buttons_frame'],
+            text='Create Directory', font=file_button_font, command=self.create_directory,
+            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', activeforeground='#003399')
+        self.elements['create_directory_button'].pack(side=RIGHT, expand=True, fill=X)
+
         files_font = Font(root=self, family='Arial', size=14)
 
         root_directory = None
@@ -282,6 +318,8 @@ class Main(Frame):
                 
                 directories = directories[1:]
 
+        self.shown_directory = root_directory['id']
+
         if root_directory == self.selected_group['files']:
             directories = []
         else:
@@ -305,7 +343,7 @@ class Main(Frame):
             directory_label.bind('<Button-1>',
                 self.generate_select_file(self.selected_group, directory_id=directory['id']))
             directory_label.bind('<Double-Button-1>',
-                self.generate_select_directory(self.selected_group, directory_id=directory['id']))
+                self.generate_select_directory(directory_id=directory['id']))
 
             self.elements['directory_label_' + str(directory['id'])] = directory_label
 
@@ -316,19 +354,25 @@ class Main(Frame):
 
             file_label.bind('<Button-1>',
                 self.generate_select_file(self.selected_group, file_id=f['id']))
+            file_label.bind('<Double-Button-1>', self.download_file)
 
             self.elements['file_label_' + str(f['id'])] = file_label
 
         self.currently_selected_file = None
         self.current_directory = root_directory['id']
 
-    def generate_select_directory(self, group, directory_id):
-        return lambda e: self.select_directory(group, directory_id)
+    def generate_select_directory(self, directory_id):
+        return lambda e: self.select_directory(directory_id)
 
-    def download_file(self):
+    def download_file(self, event=None):
         if self.current_file:
-            file_extension = FileController.get_file_extension(
-                self.current_file, Data().get_token())
+            file_extension = None
+
+            splitted_file = self.elements['file_label_' +
+                str(self.current_file)]['text'].split('.')
+
+            if len(splitted_file) > 1:
+                file_extension = splitted_file[-1]
 
             if file_extension:
                 file_name = asksaveasfilename(initialdir='/', title='Select File',
@@ -360,6 +404,28 @@ class Main(Frame):
                 self.parent.display_error(response.payload['message'])
         elif self.current_directory:
             print 'delete directory', self.current_directory
+
+    def create_file(self):
+        file_name = askopenfilename(initialdir='/', title='Select File')
+
+        if file_name:
+            actual_name = file_name.split('/')[-1]
+            file_directory = self.shown_directory
+
+            with open(file_name, 'rb') as f:
+                response = FileController.create_file(actual_name, file_directory,
+                    f.read(), Data().get_token())
+
+                if response.code == Codes.SUCCESS:
+                    self.parent.display_info('The file was successfully created!')
+
+                    self.select_group()
+                    self.select_directory(file_directory)
+                else:
+                    self.parent.display_error(response.payload['message'])
+
+    def create_directory(self):
+        print 'create directory in', self.shown_directory
 
     def log_out(self):
         Data().set_token('')

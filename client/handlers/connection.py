@@ -26,10 +26,16 @@ class Connection(object):
         return Message.deserialize(self.recieve_data())
 
     def recieve_data(self):
-        data = self.socket.recv(BUFFER_SIZE)
+        while True:
+            try:
+                data = self.socket.recv(BUFFER_SIZE)
 
-        if not data:
-            raise Exception('Connection timed out.')
+                if not data:
+                    raise Exception('Connection timed out.')
+
+                break
+            except socket.timeout:
+                pass
 
         if len(data) == BUFFER_SIZE:
             while True:
