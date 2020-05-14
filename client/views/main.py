@@ -25,12 +25,13 @@ class Main(Frame):
 
             self.elements['title']['text'] = 'Dropbox - ' + self.user_data['username']
 
+            selected_group_index = self.elements['groups_listbox'].curselection()[0]
             self.elements['groups_listbox'].delete(0, END)
 
             for group in ['Personal'] + [group['name'] for group in self.user_data['groups']]:
                 self.elements['groups_listbox'].insert(END, group)
 
-            self.elements['groups_listbox'].select_set(0)
+            self.elements['groups_listbox'].select_set(selected_group_index)
             self.elements['groups_listbox'].event_generate('<<ListboxSelect>>')
 
             return
@@ -58,9 +59,15 @@ class Main(Frame):
 
         self.elements['settings_button'] = Button(top_frame, text='Settings',
             bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=('Arial', 18),
-            activeforeground='#003399', relief=GROOVE, command=None)
+            activeforeground='#003399', relief=GROOVE, command=self.open_settings)
         self.elements['settings_button'].pack(side=RIGHT, fill=Y)
         self.elements['settings_button'].pack_propagate(False)
+
+        self.elements['invites_button'] = Button(top_frame, text='Invites',
+            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=('Arial', 18),
+            activeforeground='#003399', relief=GROOVE, command=self.open_invites)
+        self.elements['invites_button'].pack(side=RIGHT, fill=Y)
+        self.elements['invites_button'].pack_propagate(False)
 
         groups_frame = Frame(self)
         groups_frame.grid(row=1, sticky='NWS')
@@ -88,6 +95,9 @@ class Main(Frame):
         self.elements['groups_listbox'].event_generate('<<ListboxSelect>>')
 
     def select_group(self, event=None):
+        self.elements['settings_button'].pack_forget()
+        self.elements['invites_button'].pack_forget()
+
         selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
 
         if selected_group_index == -1:
@@ -95,10 +105,17 @@ class Main(Frame):
             self.user_data = Data().get_user_data()
 
             self.selected_group = self.user_data
+
+            self.elements['settings_button'].pack(side=RIGHT, fill=Y)
+            self.elements['invites_button'].pack(side=RIGHT, fill=Y)
         else:
             self.selected_group = GroupController.get_group_data(
                 self.user_data['groups'][selected_group_index]['id'],
                 Data().get_token()).payload
+
+            if self.selected_group['owner']['id'] == self.user_data['id']:
+                self.elements['settings_button'].pack(side=RIGHT, fill=Y)
+                self.elements['invites_button'].pack(side=RIGHT, fill=Y)
 
         self.elements['files_frame'].grid_forget()
         self.elements['files_frame'].destroy()
@@ -450,6 +467,17 @@ class Main(Frame):
     def log_out(self):
         Data().set_token('')
         self.parent.set_root_frame('home')
+
+    def open_settings(self):
+        selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
+
+        if selected_group_index == -1:
+            self.parent.show_frame('user_settings')
+        else:
+            self.parent.show_frame('group_settings')
+
+    def open_invites(self):
+        pass
 
     def create_group(self):
         self.parent.show_frame('create_group')

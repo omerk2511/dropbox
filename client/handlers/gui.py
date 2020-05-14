@@ -14,7 +14,7 @@ class GUI(Tk):
         Tk.__init__(self, *args, **kwargs)
 
         self.geometry('%dx%d' % (WIDTH, HEIGHT))
-        self.minsize(WIDTH, HEIGHT)
+        self.resizable(False, False)
 
         self.title(TITLE)
 
@@ -26,7 +26,9 @@ class GUI(Tk):
             'main': Main(self),
             'log_in': LogIn(self),
             'sign_up': SignUp(self),
-            'create_group': CreateGroup(self)
+            'create_group': CreateGroup(self),
+            'user_settings': UserSettings(self),
+            'group_settings': GroupSettings(self)
         }
 
         self.frame_stack = []

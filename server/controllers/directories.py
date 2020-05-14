@@ -17,8 +17,6 @@ def create_directory(payload, user):
     name = payload['name']
     group = None
 
-    print payload
-
     if 'group' in payload:
         group = payload['group']
 
