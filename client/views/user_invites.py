@@ -36,6 +36,13 @@ class UserInvites(Frame):
         self.elements['invites_frame'].pack(side=TOP, padx=120, pady=30,
             expand=False, fill=BOTH)
 
+        if not invites:
+            no_invites_label = Label(self.elements['invites_frame'], bg='gray',
+                text='You have no invites.', font=('Arial', 22), anchor='w')
+            no_invites_label.pack(side=LEFT, expand=True, fill=X)
+
+            self.elements['invite_frames'].append(no_invites_label)
+
         for invite in invites:
             invite_frame = Frame(self.elements['invites_frame'], bg='gray')
             invite_frame.pack(side=TOP, expand=False, fill=X, pady=10)
