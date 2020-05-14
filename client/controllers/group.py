@@ -25,3 +25,15 @@ class GroupController(object):
                 }
             )
         )
+
+    @staticmethod
+    def leave_group(group, token):
+        return Connection().send_recieve(
+            Message(
+                Codes.LEAVE_GROUP,
+                {
+                    'token': token,
+                    'group': group
+                }
+            )
+        )

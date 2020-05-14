@@ -25,6 +25,7 @@ class UserInvites(Frame):
         self.elements['invite_frames'] = []
 
     def initialize(self):
+        Data().set_user_data()
         invites = Data().get_user_data()['invites']
         
         for invite_frame in self.elements['invite_frames']:

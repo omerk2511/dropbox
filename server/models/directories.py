@@ -87,8 +87,6 @@ class Directories(object):
         root = [directory for directory in directories if directory[4] == None][0]
         directories = [directory for directory in directories if directory[4] != None]
 
-        print root, directories
-
         tree = {
             'id': root[0],
             'name': root[1],

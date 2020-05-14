@@ -73,6 +73,12 @@ class Main(Frame):
         self.elements['invites_button'].pack(side=RIGHT, fill=Y)
         self.elements['invites_button'].pack_propagate(False)
 
+        self.elements['leave_button'] = Button(top_frame, text='Leave',
+            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=('Arial', 18),
+            activeforeground='#003399', relief=GROOVE, command=self.leave_group)
+        self.elements['leave_button'].pack(side=RIGHT, fill=Y)
+        self.elements['leave_button'].pack_propagate(False)
+
         groups_frame = Frame(self)
         groups_frame.grid(row=1, sticky='NWS')
         groups_frame.grid_propagate(False)
@@ -101,6 +107,7 @@ class Main(Frame):
     def select_group(self, event=None):
         self.elements['settings_button'].pack_forget()
         self.elements['invites_button'].pack_forget()
+        self.elements['leave_button'].pack_forget()
 
         selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
 
@@ -120,6 +127,8 @@ class Main(Frame):
             if self.selected_group['owner']['id'] == self.user_data['id']:
                 self.elements['settings_button'].pack(side=RIGHT, fill=Y)
                 self.elements['invites_button'].pack(side=RIGHT, fill=Y)
+            else:
+                self.elements['leave_button'].pack(side=RIGHT, fill=Y)
 
         self.elements['files_frame'].grid_forget()
         self.elements['files_frame'].destroy()
@@ -467,6 +476,23 @@ class Main(Frame):
                 self.parent.display_error(response.payload['message'])
         else:
             self.parent.display_error('You have to give the directory a name!')
+
+    def leave_group(self):
+        selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
+
+        if selected_group_index != -1:
+            current_group = self.user_data['groups'][selected_group_index]['id']
+            response = GroupController.leave_group(current_group, Data().get_token())
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('You have successfully left the group!')
+
+                self.elements['groups_listbox'].delete(selected_group_index + 1)
+
+                self.elements['groups_listbox'].select_set(0)
+                self.elements['groups_listbox'].event_generate('<<ListboxSelect>>')
+            else:
+                self.parent.display_error(response.payload['message'])
 
     def log_out(self):
         Data().set_token('')
