@@ -25,7 +25,11 @@ class Main(Frame):
 
             self.elements['title']['text'] = 'Dropbox - ' + self.user_data['username']
 
-            selected_group_index = self.elements['groups_listbox'].curselection()[0]
+            try:
+                selected_group_index = self.elements['groups_listbox'].curselection()[0]
+            except:
+                selected_group_index = 0
+
             self.elements['groups_listbox'].delete(0, END)
 
             for group in ['Personal'] + [group['name'] for group in self.user_data['groups']]:
@@ -474,10 +478,17 @@ class Main(Frame):
         if selected_group_index == -1:
             self.parent.show_frame('user_settings')
         else:
+            Data().set_current_group(self.user_data['groups'][selected_group_index]['id'])
             self.parent.show_frame('group_settings')
 
     def open_invites(self):
-        pass
+        selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
+
+        if selected_group_index == -1:
+            self.parent.show_frame('user_invites')
+        else:
+            Data().set_current_group(self.user_data['groups'][selected_group_index]['id'])
+            self.parent.show_frame('group_invites')
 
     def create_group(self):
         self.parent.show_frame('create_group')

@@ -3,7 +3,7 @@ from Tkinter import *
 from common import Codes
 from ..handlers.data import Data
 
-class GroupSettings(Frame):
+class GroupInvites(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent = parent
@@ -13,9 +13,10 @@ class GroupSettings(Frame):
         title_frame = Frame(self)
         title_frame.pack(expand=True, fill=BOTH, padx=70, pady=(30, 20))
 
-        self.elements['title'] = Label(title_frame, text='Settings',
+        self.elements['title'] = Label(title_frame, text='Invites',
             fg='#003399', font=('Arial', 28))
         self.elements['title'].pack(side=TOP)
 
     def initialize(self):
-        current_group_data = Data().get_current_group()
+        invites = Data().get_current_group()['invites']
+        print invites

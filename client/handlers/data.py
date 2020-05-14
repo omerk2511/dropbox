@@ -3,7 +3,7 @@ import sqlite3 as lite
 
 from common import Codes
 from singleton import Singleton
-from ..controllers import UserDataController
+from ..controllers import UserDataController, GroupController
 
 TOKEN_PATH = 'client/data/token.txt' # move to config
 
@@ -13,6 +13,7 @@ class Data(object):
     def __init__(self):
         self.token = self.fetch_token()
         self.user_data = None
+        self.current_group = None
 
     def get_token(self):
         return self.token
@@ -20,6 +21,19 @@ class Data(object):
     def set_token(self, token):
         self.token = token
         self.store_token(token)
+
+    def get_current_group(self):
+        if self.current_group and self.token:
+            group_data_response = GroupController.get_group_data(
+                self.current_group, self.token)
+
+            if group_data_response.code != Codes.SUCCESS:
+                raise Exception(group_data_response.payload['message'])
+
+            return group_data_response.payload
+
+    def set_current_group(self, group):
+        self.current_group = group
 
     def get_user_data(self):
         return self.user_data
