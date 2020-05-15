@@ -37,4 +37,6 @@ class Codes(object):
     ADD_EDITOR = 'add_editor' #
     REMOVE_EDITOR = 'remove_editor' #
 
+    GET_ADMIN_DATA = 'get_admin_data' #
+
     PING = 'ping' #

@@ -2,6 +2,7 @@ import socket
 from threading import Thread, Event
 
 from common import Codes, Message
+from logger import Logger
 from ..controllers import *
 
 # TODO: find an appropriate place for these constants
@@ -44,7 +45,7 @@ class Connection(Thread):
                 return True
 
             message = Message.deserialize(data)
-            print '[*]', message
+            Logger.log(message)
 
             self.handle_message(message)
         except socket.error:
