@@ -531,7 +531,7 @@ class Main(Frame):
                 self.parent.display_error('Connection timed out.')
                 self.parent.quit()
 
-            if response.code == Codes.SUCCESS:          
+            if response.code == Codes.SUCCESS:
                 self.parent.display_info('Created a group successfully.')
                 self.initialize()
             else:

@@ -3,7 +3,7 @@ import sqlite3 as lite
 
 from common import Codes
 from singleton import Singleton
-from ..controllers import UserDataController, GroupController
+from ..controllers import UserController, GroupController
 
 TOKEN_PATH = 'client/data/token.txt' # move to config
 
@@ -99,7 +99,7 @@ class Data(object):
     def set_user_data(self):
         if self.token:
             try:
-                user_data_response = UserDataController.get_user_data(self.token)
+                user_data_response = UserController.get_user_data(self.token)
 
                 if user_data_response.code != Codes.SUCCESS:
                     raise Exception('Not logged in.')
