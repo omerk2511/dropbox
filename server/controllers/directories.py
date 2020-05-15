@@ -7,7 +7,7 @@ from ..models import Groups, UsersGroups, Directories
 CREATE_DIRECTORY_PAYLOAD = [
     ('name', [str, unicode]),
     ('parent', [int]),
-    ('group', [str, unicode], True)
+    ('group', [int], True)
 ]
 
 @controller(Codes.CREATE_DIRECTORY)
@@ -62,9 +62,9 @@ def create_directory(payload, user):
             )
 
     if group:
-        directories = Directories.get_group_directories(group)
+        directories = Directories.get_group_directories_under_parent(group, parent)
     else:
-        directories = Directories.get_user_directories(user['id'])
+        directories = Directories.get_user_directories_under_parent(user['id'], parent)
 
     if name in [directory[1] for directory in directories]:
         return Message(

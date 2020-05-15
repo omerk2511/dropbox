@@ -36,3 +36,5 @@ class Codes(object):
 
     ADD_EDITOR = 'add_editor' #
     REMOVE_EDITOR = 'remove_editor' #
+
+    PING = 'ping' #

@@ -40,6 +40,17 @@ class Directories(object):
         )
 
     @staticmethod
+    def get_user_directories_under_parent(user_id, parent):
+        return database.fetch(
+            '''
+            SELECT * FROM directories d
+            LEFT JOIN users u ON d.owner = u.id
+            WHERE u.id = ? AND d.parent = ? AND d.`group` IS NULL
+            ''',
+            (user_id, parent)
+        )
+
+    @staticmethod
     def get_group_directories(group_id):
         return database.fetch(
             '''
@@ -48,6 +59,17 @@ class Directories(object):
             WHERE g.id = ?
             ''',
             (group_id,)
+        )
+
+    @staticmethod
+    def get_group_directories_under_parent(group_id, parent):
+        return database.fetch(
+            '''
+            SELECT * FROM directories d
+            LEFT JOIN groups g ON d.`group` = g.id
+            WHERE g.id = ? AND d.parent = ?
+            ''',
+            (group_id, parent)
         )
 
     @staticmethod
@@ -74,7 +96,8 @@ class Directories(object):
                 {
                     'id': f[0],
                     'name': f[2],
-                    'owner': f[3]
+                    'owner': f[3],
+                    'type': 'file'
                 } for f in Files.get_directory_files(root[0])
             ]
         }
@@ -86,11 +109,13 @@ class Directories(object):
             tree_stack = [tree]
 
             while not parent_node and len(tree_stack) > 0:
-                if tree_stack[0]['id'] == parent:
-                    parent_node = tree_stack[0]
-                else:
-                    tree_stack += tree_stack[0]['files']
-                    tree_stack = tree_stack[1:]
+                if tree_stack[0]['type'] == 'directory':
+                    if tree_stack[0]['id'] == parent:
+                        parent_node = tree_stack[0]
+                    else:
+                        tree_stack += tree_stack[0]['files']
+                    
+                tree_stack = tree_stack[1:]
 
             if parent_node:
                 parent_node['files'].append(
@@ -103,7 +128,8 @@ class Directories(object):
                             {
                                 'id': f[0],
                                 'name': f[2],
-                                'owner': f[3]
+                                'owner': f[3],
+                                'type': 'file'
                             } for f in Files.get_directory_files(directories[0][0])
                         ]
                     }
