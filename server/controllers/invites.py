@@ -34,6 +34,14 @@ def invite(payload, user):
             { 'message': 'This user has already been invited to the group.' }
         )
 
+    group_users = [user[0] for user in UsersGroups.get_users(payload['group'])]
+
+    if invited_user[0] in group_users:
+        return Message(
+            Codes.CONFLICT,
+            { 'message': 'This user is already in the group.' }
+        )
+
     Invites.create(invited_user[0], payload['group'])
 
     return Message(

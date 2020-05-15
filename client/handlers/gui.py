@@ -26,7 +26,6 @@ class GUI(Tk):
             'main': Main(self),
             'log_in': LogIn(self),
             'sign_up': SignUp(self),
-            'create_group': CreateGroup(self),
             'user_settings': UserSettings(self),
             'group_settings': GroupSettings(self),
             'user_invites': UserInvites(self),

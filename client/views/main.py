@@ -228,7 +228,9 @@ class Main(Frame):
             
             self.elements['download_file_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
-            if file_info['owner']['id'] == Data().get_user_data()['id']:
+            if file_info['owner']['id'] == Data().get_user_data()['id'] or (
+                'owner' in self.selected_group and 
+                self.selected_group['owner']['id'] == Data().get_user_data()['id']):
                 self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         if directory_id:
@@ -254,7 +256,9 @@ class Main(Frame):
 
                 self.elements['download_file_button'].pack_forget()
 
-                if directory_info['owner']['id'] == Data().get_user_data()['id']:
+                if directory_info['owner']['id'] == Data().get_user_data()['id'] or (
+                    'owner' in self.selected_group and 
+                    self.selected_group['owner']['id'] == Data().get_user_data()['id']):
                     self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         self.currently_selected_file['bg'] = 'gray'
@@ -517,4 +521,20 @@ class Main(Frame):
             self.parent.show_frame('group_invites')
 
     def create_group(self):
-        self.parent.show_frame('create_group')
+        group_name = askstring('Required Input',
+            'Enter a name for the group:', parent=self)
+
+        if group_name:
+            try:
+                response = GroupController.create_group(group_name, Data().get_token())
+            except:
+                self.parent.display_error('Connection timed out.')
+                self.parent.quit()
+
+            if response.code == Codes.SUCCESS:          
+                self.parent.display_info('Created a group successfully.')
+                self.initialize()
+            else:
+                self.parent.display_error(response.payload['message'])
+        else:
+            self.parent.display_error('You have to give the group a name!')
