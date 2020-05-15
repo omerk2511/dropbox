@@ -5,4 +5,5 @@ from invites import Invites
 from directories import Directories
 from files import Files
 from editors import Editors
+from logs import Logs
 from initialization import initialize_models
