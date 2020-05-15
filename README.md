@@ -8,7 +8,7 @@ In order to run the server, type in: `python -m server.server`
 And for the client, just write: `python -m client.client`
 
 ## Features
-- [ ] Graphical Client
+- [x] Graphical Client
 - [x] Multithreaded Server
 - [x] JSON Based Protocol
 - [x] User Management
