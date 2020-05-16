@@ -14,6 +14,7 @@ class Data(object):
         self.token = self.fetch_token()
         self.user_data = None
         self.current_group = None
+        self.current_file = None
 
     def get_token(self):
         return self.token
@@ -34,6 +35,12 @@ class Data(object):
 
     def set_current_group(self, group):
         self.current_group = group
+
+    def get_current_file(self):
+        return self.current_file
+
+    def set_current_file(self, current_file):
+        self.current_file = current_file
 
     def get_user_data(self):
         return self.user_data

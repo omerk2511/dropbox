@@ -29,6 +29,15 @@ class Directories(object):
         )
 
     @staticmethod
+    def get_sub_directories(parent):
+        return database.fetch(
+            '''
+            SELECT * FROM directories WHERE parent = ?
+            ''',
+            (parent,)
+        )
+
+    @staticmethod
     def get_user_directories(user_id):
         return database.fetch(
             '''

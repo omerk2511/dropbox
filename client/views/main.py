@@ -1,6 +1,7 @@
+import os
 from Tkinter import *
 from tkSimpleDialog import askstring
-from tkFileDialog import asksaveasfilename, askopenfilename
+from tkFileDialog import asksaveasfilename, askopenfilename, askdirectory
 
 from common import Codes
 from ..handlers.data import Data
@@ -21,12 +22,14 @@ class Main(Frame):
         self.user_data = Data().get_user_data()
 
         if self.elements:
-            # update the user data based elements
-
             self.elements['title']['text'] = 'Dropbox - ' + self.user_data['username']
 
             try:
                 selected_group_index = self.elements['groups_listbox'].curselection()[0]
+
+                self.selected_group = GroupController.get_group_data(
+                    self.user_data['groups'][selected_group_index]['id'],
+                    Data().get_token()).payload
             except:
                 selected_group_index = 0
 
@@ -47,8 +50,6 @@ class Main(Frame):
 
         top_frame = Frame(self, bg='#003399')
         top_frame.grid(row=0, columnspan=2, sticky='NEW')
-
-        # LOGO
 
         self.elements['title'] = Label(top_frame, text='Dropbox - ' + self.user_data['username'],
             padx=10, pady=10, fg='#ffffff', bg='#003399', font=('Arial', 22))
@@ -127,9 +128,13 @@ class Main(Frame):
             self.elements['settings_button'].pack(side=RIGHT, fill=Y)
             self.elements['invites_button'].pack(side=RIGHT, fill=Y)
         else:
-            self.selected_group = GroupController.get_group_data(
-                self.user_data['groups'][selected_group_index]['id'],
-                Data().get_token()).payload
+            try:
+                self.selected_group = GroupController.get_group_data(
+                    self.user_data['groups'][selected_group_index]['id'],
+                    Data().get_token()).payload
+            except:
+                self.initialize()
+                return
 
             if self.selected_group['owner']['id'] == self.user_data['id']:
                 self.elements['settings_button'].pack(side=RIGHT, fill=Y)
@@ -166,8 +171,23 @@ class Main(Frame):
         self.elements['download_file_button'] = Button(self.elements['current_file_frame'],
             text='Download File', font=('Arial', 14), command=self.download_file)
 
+        self.elements['download_directory_button'] = Button(self.elements['current_file_frame'],
+            text='Download Directory', font=('Arial', 14), command=self.download_directory)
+
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
+
+        self.elements['editors_button'] = Button(self.elements['current_file_frame'],
+            text='Editors', font=('Arial', 14), command=self.open_editors)
+
+        self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change File Name', font=('Arial', 14), command=self.change_file_name)
+
+        self.elements['change_directory_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change Directory Name', font=('Arial', 14), command=self.change_directory_name)
+
+        self.elements['reupload_file_button'] = Button(self.elements['current_file_frame'],
+            text='Reupload File', font=('Arial', 14), command=self.reupload_file)
 
         self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
@@ -223,7 +243,12 @@ class Main(Frame):
         if self.currently_selected_file:
             self.currently_selected_file['bg'] = 'SystemButtonFace'
 
+        self.elements['download_directory_button'].pack_forget()
         self.elements['delete_button'].pack_forget()
+        self.elements['editors_button'].pack_forget()
+        self.elements['change_file_name_button'].pack_forget()
+        self.elements['change_directory_name_button'].pack_forget()
+        self.elements['reupload_file_button'].pack_forget()
 
         if file_id:
             self.current_file = file_id
@@ -242,6 +267,14 @@ class Main(Frame):
                 'owner' in self.selected_group and 
                 self.selected_group['owner']['id'] == Data().get_user_data()['id']):
                 self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+                
+            if file_info['owner']['id'] == Data().get_user_data()['id'] and \
+                self.selected_group != self.user_data:
+                self.elements['editors_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+
+            if FileController.is_file_editor(self.current_file, Data().get_token()):
+                self.elements['change_file_name_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+                self.elements['reupload_file_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         if directory_id:
             self.currently_selected_file = self.elements['directory_label_' + str(directory_id)]
@@ -252,6 +285,7 @@ class Main(Frame):
                 self.elements['current_file_owner_label']['text'] = ''
 
                 self.elements['download_file_button'].pack_forget()
+                self.elements['download_directory_button'].pack_forget()
                 self.elements['delete_button'].pack_forget()
             else:
                 self.current_file = None
@@ -264,12 +298,15 @@ class Main(Frame):
                 self.elements['current_file_type_label']['text'] = 'Type: ' + directory_info['type']
                 self.elements['current_file_owner_label']['text'] = 'Owner: ' + directory_info['owner']['full_name']
 
+                self.elements['download_directory_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+
                 self.elements['download_file_button'].pack_forget()
 
                 if directory_info['owner']['id'] == Data().get_user_data()['id'] or (
                     'owner' in self.selected_group and 
                     self.selected_group['owner']['id'] == Data().get_user_data()['id']):
                     self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+                    self.elements['change_directory_name_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         self.currently_selected_file['bg'] = 'gray'
 
@@ -303,8 +340,23 @@ class Main(Frame):
         self.elements['download_file_button'] = Button(self.elements['current_file_frame'],
             text='Download File', font=('Arial', 14), command=self.download_file)
 
+        self.elements['download_directory_button'] = Button(self.elements['current_file_frame'],
+            text='Download Directory', font=('Arial', 14), command=self.download_directory)
+
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
+
+        self.elements['editors_button'] = Button(self.elements['current_file_frame'],
+            text='Editors', font=('Arial', 14), command=self.open_editors)
+
+        self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change File Name', font=('Arial', 14), command=self.change_file_name)
+
+        self.elements['change_directory_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change Directory Name', font=('Arial', 14), command=self.change_directory_name)
+
+        self.elements['reupload_file_button'] = Button(self.elements['current_file_frame'],
+            text='Reupload File', font=('Arial', 14), command=self.reupload_file)
 
         self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
@@ -416,13 +468,51 @@ class Main(Frame):
                 if not file_name.endswith('.' + file_extension):
                     file_name += '.' + file_extension
 
+                try:
+                    content = FileController.get_file_content(
+                        self.current_file, Data().get_token())
+
+                    with open(file_name, 'wb') as f:
+                        f.write(content)
+
+                    self.parent.display_info('File downloaded successfully!')
+                except Exception as e:
+                    self.parent.display_error(str(e))
+
+    def download_directory_files(self, path, files):
+        for f in files:
+            if f['type'] == 'file':
                 content = FileController.get_file_content(
-                    self.current_file, Data().get_token())
+                    f['id'], Data().get_token())
 
-                with open(file_name, 'wb') as f:
-                    f.write(content)
+                with open(os.path.join(path, f['name']), 'wb') as fd:
+                    fd.write(content)
 
-                self.parent.display_info('File downloaded successfully!')
+            if f['type'] == 'directory':
+                new_directory_path = os.path.join(path, f['name'])
+
+                os.mkdir(new_directory_path)
+                self.download_directory_files(new_directory_path, f['files'])
+
+    def download_directory(self):
+        if self.current_directory:
+            directory_name = askdirectory()
+
+            if directory_name:
+                directories = self.selected_group['files']['files']
+                selected_directory = None
+
+                while directories and not selected_directory:
+                    if directories[0]['type'] == 'directory':
+                        if directories[0]['id'] == self.current_directory:
+                            selected_directory = directories[0]
+                        else:
+                            directories += directories[0]['files']
+                    
+                    directories = directories[1:]
+
+                self.download_directory_files(directory_name, selected_directory['files'])
+                self.parent.display_info('Directory downloaded successfully!')
 
     def delete_file(self):
         if self.current_file:
@@ -437,9 +527,21 @@ class Main(Frame):
                 self.select_group()
                 self.select_directory(file_directory)
             else:
-                self.parent.display_error(response.payload['message'])
+                self.parent.display_error(response.payload['message'])       
         elif self.current_directory:
-            print 'delete directory', self.current_directory
+            response = DirectoryController.delete_directory(self.current_directory,
+                Data().get_token())
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('The directory was deleted successfully!')
+
+                self.select_directory(-1)
+                parent_directory = self.current_directory
+
+                self.select_group()
+                self.select_directory(parent_directory)
+            else:
+                self.parent.display_error(request.payload['message'])
 
     def create_file(self):
         file_name = askopenfilename(initialdir='/', title='Select File')
@@ -551,3 +653,71 @@ class Main(Frame):
 
     def open_admin(self):
         self.parent.show_frame('admin')
+
+    def open_editors(self):
+        Data().set_current_file(self.current_file)
+        self.parent.show_frame('editors')
+
+    def change_file_name(self):
+        file_name = askstring('Required Input',
+            'Enter a new file name:', parent=self)
+
+        if file_name:
+            file_extension = None
+
+            splitted_file = self.elements['file_label_' +
+                str(self.current_file)]['text'].split('.')
+
+            if len(splitted_file) > 1:
+                file_extension = splitted_file[-1]
+
+            if file_extension:
+                if not file_name.endswith(file_extension):
+                    file_name += '.' + file_extension
+
+            response = FileController.update_file(self.current_file, Data().get_token(),
+                name=file_name)
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('Changed the file name successfully!')
+
+                self.elements['file_label_' + str(self.current_file)]['text'] = file_name
+                self.elements['current_file_name_label']['text'] = file_name
+            else:
+                self.parent.display_error(response.payload['message'])
+        else:
+            self.parent.display_error('You have to give the file a name!')
+
+    def change_directory_name(self):
+        directory_name = askstring('Required Input',
+            'Enter a new directory name:', parent=self)
+
+        if directory_name:
+            if not directory_name.endswith('/'):
+                directory_name += '/'
+
+            response = DirectoryController.update_directory_name(self.current_directory,
+                directory_name, Data().get_token())
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('Changed the directory name successfully!')
+
+                self.elements['directory_label_' + str(self.current_directory)]['text'] = directory_name
+                self.elements['current_file_name_label']['text'] = directory_name
+            else:
+                self.parent.display_error(response.payload['message'])
+        else:
+            self.parent.display_error('You have to give the directory a name!')
+
+    def reupload_file(self):
+        file_name = askopenfilename(initialdir='/', title='Select File')
+
+        if file_name:
+            with open(file_name, 'rb') as f:
+                response = FileController.update_file(self.current_file, Data().get_token(),
+                    content=f.read())
+
+                if response.code == Codes.SUCCESS:
+                    self.parent.display_info('The file was successfully reuploaded!')
+                else:
+                    self.parent.display_error(response.payload['message'])

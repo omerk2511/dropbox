@@ -159,3 +159,33 @@ def leave_group(payload, user):
         Codes.SUCCESS,
         { 'message': 'You have left the group successfully.' }
     )
+
+KICK_GROUP_USER_PAYLOAD = [
+    ('group', [int]),
+    ('user', [int])
+]
+
+@controller(Codes.KICK_GROUP_USER)
+@authenticated
+@validator(KICK_GROUP_USER_PAYLOAD)
+@existing_group
+@group_owner
+def kick_group_user(payload, user):
+    if payload['user'] == user['id']:
+        return Message(
+            Codes.BAD_REQUEST,
+            { 'message': 'The owner of the group cannot be kicked.' }
+        )
+
+    if not UsersGroups.is_in_group(payload['user'], payload['group']):
+        return Message(
+            Codes.NOT_FOUND,
+            { 'message': 'This user is not a member of the group.' }
+        )
+
+    UsersGroups.delete(payload['user'], payload['group'])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'Kicked the user successfully.' }
+    )

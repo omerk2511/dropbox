@@ -1,8 +1,8 @@
 from common import Codes, Message
 from controller import controller
 from validators import validator, existing_directory
-from auth import authenticated, directory_editor, is_directory_owner
-from ..models import Groups, UsersGroups, Directories
+from auth import authenticated, directory_editor, directory_owner, is_directory_owner
+from ..models import Groups, UsersGroups, Files, Directories
 
 CREATE_DIRECTORY_PAYLOAD = [
     ('name', [str, unicode]),
@@ -108,9 +108,9 @@ def update_directory(payload, user):
 
     if 'name' in payload:
         if group:
-            directories = Directories.get_user_directories(user['id'])
-        else:
             directories = Directories.get_group_directories(group)
+        else:
+            directories = Directories.get_user_directories(user['id'])
 
         if payload['name'] in [directory[1] for directory in directories]:
             return Message(
@@ -155,4 +155,33 @@ def update_directory(payload, user):
     return Message(
         Codes.SUCCESS,
         { 'message': 'The directory has been updated successfully.' }
+    )
+
+DELETE_DIRECTORY_PAYLOAD = [
+    ('directory', [int])
+]
+
+@controller(Codes.DELETE_DIRECTORY)
+@authenticated
+@validator(DELETE_DIRECTORY_PAYLOAD)
+@existing_directory
+@directory_owner
+def delete_directory(payload, user):
+    directory_files = Files.get_directory_files(payload['directory'])
+    sub_directories = Directories.get_sub_directories(payload['directory'])
+
+    while sub_directories:
+        directory_files += Files.get_directory_files(sub_directories[0][0])
+        sub_directories += Directories.get_sub_directories(sub_directories[0][0])
+
+        sub_directories = sub_directories[1:]
+
+    for f in directory_files:
+        Files.delete(f[0])
+
+    Directories.delete(payload['directory'])
+
+    return Message(
+        Codes.SUCCESS,
+        { 'message': 'The directory has been deleted successfully!' }
     )

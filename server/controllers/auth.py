@@ -78,7 +78,7 @@ def directory_owner(func):
     return wrapper
 
 def is_directory_editor(directory_id, user_id):
-    is_editor = Editor.is_directory_editor(user_id, directory_id)
+    is_editor = Editors.is_directory_editor(user_id, directory_id)
     is_editor = is_editor or is_directory_owner(directory_id, user_id)
 
     return is_editor
@@ -132,7 +132,7 @@ def is_file_owner(file_id, user_id):
     file_owner = user_id == f[3] or user_id == directory[2]
 
     if group_id:
-        group = Directories.get(group_id)[0]
+        group = Groups.get(group_id)[0]
         file_owner = file_owner or user_id == group[2]
 
     return file_owner
@@ -151,7 +151,7 @@ def file_owner(func):
     return wrapper
 
 def is_file_editor(file_id, user_id):
-    is_editor = Editor.is_file_editor(user_id, file_id)
+    is_editor = Editors.is_file_editor(user_id, file_id)
     is_editor = is_editor or is_file_owner(file_id, user_id)
 
     return is_editor

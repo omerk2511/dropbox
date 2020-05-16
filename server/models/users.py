@@ -28,6 +28,19 @@ class Users(object):
         )
 
     @staticmethod
+    def get_formatted(user_id):
+        user = database.fetch(
+            'SELECT * FROM users WHERE id = ?',
+            (user_id,)
+        )[0]
+
+        return {
+            'id': user[0],
+            'username': user[1],
+            'full_name': user[2]
+        }
+
+    @staticmethod
     def get_by_username(username):
         return database.fetch(
             'SELECT * FROM users WHERE username = ?',
