@@ -29,7 +29,8 @@ class GUI(Tk):
             'user_settings': UserSettings(self),
             'group_settings': GroupSettings(self),
             'user_invites': UserInvites(self),
-            'group_invites': GroupInvites(self)
+            'group_invites': GroupInvites(self),
+            'admin': Admin(self)
         }
 
         self.frame_stack = []

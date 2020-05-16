@@ -5,3 +5,4 @@ from group import GroupController
 from files import FileController
 from directory import DirectoryController
 from invite import InviteController
+from admin_data import AdminDataController
