@@ -59,10 +59,10 @@ class GroupInvites(Frame):
                 text='%s (%s)' % (invite['user']['username'], invite['user']['full_name']))
             invite_label.pack(side=LEFT, padx=20, pady=10)
 
-            reject_invite_button = Button(invite_frame, text='Revoke',
+            revoke_invite_button = Button(invite_frame, text='Revoke',
                 font=('Arial', 16), bg='#990000', fg='#ffffff', activebackground='#b30000',
                 activeforeground='#ffffff', command=self.generate_revoke_invite(invite['id']))
-            reject_invite_button.pack(side=RIGHT, padx=20, pady=10)
+            revoke_invite_button.pack(side=RIGHT, padx=20, pady=10)
 
             self.elements['invite_frames'].append(invite_frame)
 

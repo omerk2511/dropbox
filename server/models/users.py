@@ -32,7 +32,7 @@ class Users(object):
         user = database.fetch(
             'SELECT * FROM users WHERE id = ?',
             (user_id,)
-        )
+        )[0]
 
         return {
             'id': user[0],

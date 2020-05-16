@@ -30,6 +30,7 @@ class GUI(Tk):
             'group_settings': GroupSettings(self),
             'user_invites': UserInvites(self),
             'group_invites': GroupInvites(self),
+            'editors': Editors(self),
             'admin': Admin(self)
         }
 

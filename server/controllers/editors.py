@@ -5,7 +5,7 @@ from auth import authenticated, is_file_owner, is_in_file_context, in_file_conte
 from ..models import Users, Editors
 
 ADD_EDITOR_PAYLOAD = [
-    ('user', [int]),
+    ('user', [str, unicode]),
     [
         ('file', [int]),
         ('directory', [int])
@@ -22,7 +22,13 @@ def add_editor(payload, user):
             { 'message': 'Invalid payload. You should supply either a file or a directory, not both.' }
         )
 
-    editor_id = payload['user']
+    try:
+        editor_id = Users.get_by_username(payload['user'])[0][0]
+    except:
+        return Message(
+            Codes.NOT_FOUND,
+            { 'message': 'The request user was not found.' }
+        )
 
     if 'file' in payload:
         if not file_exists(payload['file']):

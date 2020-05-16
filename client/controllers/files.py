@@ -63,18 +63,6 @@ class FileController(object):
             return False
 
     @staticmethod
-    def get_file_editors(file_id, token):
-        return Connection().send_recieve(
-            Message(
-                Codes.GET_EDITORS,
-                {
-                    'token': token,
-                    'file': file_id
-                }
-            )
-        )
-
-    @staticmethod
     def update_file(file_id, token, name=None, content=None):
         request = {
             'token': token,
@@ -91,5 +79,42 @@ class FileController(object):
             Message(
                 Codes.UPDATE_FILE,
                 request
+            )
+        )
+
+    @staticmethod
+    def get_file_editors(file_id, token):
+        return Connection().send_recieve(
+            Message(
+                Codes.GET_EDITORS,
+                {
+                    'token': token,
+                    'file': file_id
+                }
+            )
+        ).payload['editors']
+
+    @staticmethod
+    def add_file_editor(file_id, user, token):
+        return Connection().send_recieve(
+            Message(
+                Codes.ADD_EDITOR,
+                {
+                    'token': token,
+                    'file': file_id,
+                    'user': user
+                }
+            )
+        )
+
+    @staticmethod
+    def remove_file_editor(editor_id, token):
+        return Connection().send_recieve(
+            Message(
+                Codes.REMOVE_EDITOR,
+                {
+                    'token': token,
+                    'editor': editor_id
+                }
             )
         )

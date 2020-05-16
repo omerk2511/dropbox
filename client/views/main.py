@@ -647,7 +647,8 @@ class Main(Frame):
         self.parent.show_frame('admin')
 
     def open_editors(self):
-        pass
+        Data().set_current_file(self.current_file)
+        self.parent.show_frame('editors')
 
     def change_file_name(self):
         file_name = askstring('Required Input',
