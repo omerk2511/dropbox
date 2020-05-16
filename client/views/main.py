@@ -28,6 +28,10 @@ class Main(Frame):
 
             try:
                 selected_group_index = self.elements['groups_listbox'].curselection()[0]
+
+                self.selected_group = GroupController.get_group_data(
+                    self.user_data['groups'][selected_group_index]['id'],
+                    Data().get_token()).payload
             except:
                 selected_group_index = 0
 
@@ -128,9 +132,13 @@ class Main(Frame):
             self.elements['settings_button'].pack(side=RIGHT, fill=Y)
             self.elements['invites_button'].pack(side=RIGHT, fill=Y)
         else:
-            self.selected_group = GroupController.get_group_data(
-                self.user_data['groups'][selected_group_index]['id'],
-                Data().get_token()).payload
+            try:
+                self.selected_group = GroupController.get_group_data(
+                    self.user_data['groups'][selected_group_index]['id'],
+                    Data().get_token()).payload
+            except:
+                self.initialize()
+                return
 
             if self.selected_group['owner']['id'] == self.user_data['id']:
                 self.elements['settings_button'].pack(side=RIGHT, fill=Y)
@@ -427,13 +435,16 @@ class Main(Frame):
                 if not file_name.endswith('.' + file_extension):
                     file_name += '.' + file_extension
 
-                content = FileController.get_file_content(
-                    self.current_file, Data().get_token())
+                try:
+                    content = FileController.get_file_content(
+                        self.current_file, Data().get_token())
 
-                with open(file_name, 'wb') as f:
-                    f.write(content)
+                    with open(file_name, 'wb') as f:
+                        f.write(content)
 
-                self.parent.display_info('File downloaded successfully!')
+                    self.parent.display_info('File downloaded successfully!')
+                except Exception as e:
+                    self.parent.display_error(str(e))
 
     def download_directory_files(self, path, files):
         for f in files:

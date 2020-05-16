@@ -6,16 +6,20 @@ from ..handlers.connection import Connection
 class FileController(object):
     @staticmethod
     def get_file_content(file_id, token):
-        return base64.b64decode(
-            Connection().send_recieve(
-                Message(
-                    Codes.GET_FILE,
-                    {
-                        'token': token,
-                        'file': file_id
-                    }
-                )
-            ).payload['content'])
+        response = Connection().send_recieve(
+            Message(
+                Codes.GET_FILE,
+                {
+                    'token': token,
+                    'file': file_id
+                }
+            )
+        )
+
+        if response.code == Codes.SUCCESS:
+            return base64.b64decode(response.payload['content'])
+        
+        raise Exception(response.payload['message'])
 
     @staticmethod
     def create_file(name, directory, content, token):
