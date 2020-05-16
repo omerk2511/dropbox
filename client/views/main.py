@@ -372,7 +372,20 @@ class Main(Frame):
         self.elements['create_directory_button'].pack(side=RIGHT, expand=True, fill=X)
 
         root_directory = None
-        
+
+        try:
+            if self.selected_group == self.user_data:
+                Data().set_user_data()
+                self.user_data = Data().get_user_data()
+
+                self.selected_group = self.user_data
+            else:
+                self.selected_group = GroupController.get_group_data(
+                    self.selected_group['id'], Data().get_token()).payload
+        except:
+            self.initialize()
+            return
+
         directories = self.selected_group['files']['files']
         
         if directory_id == self.selected_group['files']['id']:
@@ -383,7 +396,7 @@ class Main(Frame):
                 in directories if f['type'] == 'directory']:
                 root_directory = self.selected_group['files']
 
-            while directories and not root_directory:            
+            while directories and not root_directory:
                 if directories[0]['type'] == 'directory':
                     if self.current_directory in [f['id'] for
                         f in directories[0]['files'] if f['type'] == 'directory']:

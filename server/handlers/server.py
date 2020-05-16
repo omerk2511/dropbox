@@ -23,7 +23,7 @@ class Server(object):
                 try:
                     client_socket, client_address = self.socket.accept()
                     
-                    connection = Connection(client_socket, client_address)
+                    connection = Connection(client_socket, client_address, self.connections)
                     connection.start()
 
                     self.connections.append(connection)

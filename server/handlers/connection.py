@@ -9,11 +9,13 @@ BUFFER_SIZE = 4096
 EVENT_TIMEOUT = 0.00000001
 
 class Connection(Thread):
-    def __init__(self, socket, address):
+    def __init__(self, socket, address, server_connections):
         Thread.__init__(self)
 
         self.socket = socket
         self.address = address[0] + ':' + str(address[1])
+
+        self.server_connections = server_connections
 
         self.stop = Event()
 
@@ -26,7 +28,7 @@ class Connection(Thread):
             if should_stop:
                 break
 
-        # should clean itself from Server connections list
+        self.server_connections.remove(self)
 
         self.socket.close()
         Logger.log_activity(self.address + ' has disconnected')

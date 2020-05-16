@@ -96,7 +96,7 @@ class GroupSettings(Frame):
             user_id, Data().get_token())
 
         if response.code == Codes.SUCCESS:
-            self.parent.display_info('The user has been kick successfully!')
+            self.parent.display_info('The user has been kicked successfully!')
             self.initialize()
         else:
             self.parent.display_error(response.payload['message'])
