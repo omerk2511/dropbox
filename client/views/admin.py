@@ -32,12 +32,18 @@ class Admin(Frame):
             font=('Arial', 18))
         self.elements['errors_label'].pack(side=TOP, anchor=NW, pady=5)
 
-        errors_scrollbar = Scrollbar(errors_frame)
-        errors_scrollbar.pack(side=RIGHT, fill=Y)
+        y_errors_scrollbar = Scrollbar(errors_frame)
+        y_errors_scrollbar.pack(side=RIGHT, fill=Y)
+
+        x_errors_scrollbar = Scrollbar(errors_frame, orient='horizontal')
+        x_errors_scrollbar.pack(side=BOTTOM, fill=X)        
 
         self.elements['errors_listbox'] = Listbox(errors_frame, font=('Arial', 14),
-            yscrollcommand=errors_scrollbar.set)
+            yscrollcommand=y_errors_scrollbar.set, xscrollcommand=x_errors_scrollbar.set)
         self.elements['errors_listbox'].pack(side=TOP, anchor=NW, expand=True, fill=BOTH)
+
+        y_errors_scrollbar.config(command=self.elements['errors_listbox'].yview)
+        x_errors_scrollbar.config(command=self.elements['errors_listbox'].xview)
 
         activity_frame = Frame(self)
         activity_frame.pack(expand=True, fill=BOTH, padx=70, pady=(15, 40))
@@ -46,12 +52,18 @@ class Admin(Frame):
             font=('Arial', 18))
         self.elements['activity_label'].pack(side=TOP, anchor=NW, pady=5)
 
-        activity_scrollbar = Scrollbar(activity_frame)
-        activity_scrollbar.pack(side=RIGHT, fill=Y)
+        y_activity_scrollbar = Scrollbar(activity_frame)
+        y_activity_scrollbar.pack(side=RIGHT, fill=Y)
+
+        x_activity_scrollbar = Scrollbar(activity_frame, orient='horizontal')
+        x_activity_scrollbar.pack(side=BOTTOM, fill=X)
 
         self.elements['activity_listbox'] = Listbox(activity_frame, font=('Arial', 14),
-            yscrollcommand=activity_scrollbar.set)
+            yscrollcommand=y_activity_scrollbar.set, xscrollcommand=x_activity_scrollbar.set)
         self.elements['activity_listbox'].pack(side=TOP, anchor=NW, expand=True, fill=BOTH)
+
+        y_activity_scrollbar.config(command=self.elements['activity_listbox'].yview)
+        x_activity_scrollbar.config(command=self.elements['activity_listbox'].xview)
 
     def initialize(self):
         admin_data_response = AdminDataController.get_admin_data(Data().get_token())
