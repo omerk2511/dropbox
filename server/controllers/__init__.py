@@ -5,4 +5,5 @@ from invites import *
 from directories import *
 from files import *
 from editors import *
+from admin import *
 from ping import *

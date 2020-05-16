@@ -79,6 +79,12 @@ class Main(Frame):
         self.elements['leave_button'].pack(side=RIGHT, fill=Y)
         self.elements['leave_button'].pack_propagate(False)
 
+        self.elements['admin_button'] = Button(top_frame, text='Admin',
+            bg='#ffffff', activebackground='#f2f2f2', fg='#003399', font=('Arial', 18),
+            activeforeground='#003399', relief=GROOVE, command=self.open_admin)
+        self.elements['admin_button'].pack(side=RIGHT, fill=Y)
+        self.elements['admin_button'].pack_propagate(False)
+
         groups_frame = Frame(self)
         groups_frame.grid(row=1, sticky='NWS')
         groups_frame.grid_propagate(False)
@@ -108,6 +114,7 @@ class Main(Frame):
         self.elements['settings_button'].pack_forget()
         self.elements['invites_button'].pack_forget()
         self.elements['leave_button'].pack_forget()
+        self.elements['admin_button'].pack_forget()
 
         selected_group_index = self.elements['groups_listbox'].curselection()[0] - 1
 
@@ -129,6 +136,9 @@ class Main(Frame):
                 self.elements['invites_button'].pack(side=RIGHT, fill=Y)
             else:
                 self.elements['leave_button'].pack(side=RIGHT, fill=Y)
+
+        if self.user_data['username'] == 'admin':
+            self.elements['admin_button'].pack(side=RIGHT, fill=Y)
 
         self.elements['files_frame'].grid_forget()
         self.elements['files_frame'].destroy()
@@ -538,3 +548,6 @@ class Main(Frame):
                 self.parent.display_error(response.payload['message'])
         else:
             self.parent.display_error('You have to give the group a name!')
+
+    def open_admin(self):
+        self.parent.show_frame('admin')

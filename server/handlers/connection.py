@@ -2,9 +2,9 @@ import socket
 from threading import Thread, Event
 
 from common import Codes, Message
+from logger import Logger
 from ..controllers import *
 
-# TODO: find an appropriate place for these constants
 BUFFER_SIZE = 4096
 EVENT_TIMEOUT = 0.00000001
 
@@ -17,7 +17,7 @@ class Connection(Thread):
 
         self.stop = Event()
 
-        print '[+]', self.address, 'has connected'
+        Logger.log_activity(self.address + ' has connected!')
 
     def run(self):
         while True:
@@ -29,7 +29,7 @@ class Connection(Thread):
         # should clean itself from Server connections list
 
         self.socket.close()
-        print '[-]', self.address, 'has disconnected'
+        Logger.log_activity(self.address + ' has disconnected')
 
     def iteration(self):
         should_stop = self.stop.wait(EVENT_TIMEOUT)
@@ -44,7 +44,7 @@ class Connection(Thread):
                 return True
 
             message = Message.deserialize(data)
-            print '[*]', message
+            Logger.log_activity(message)
 
             self.handle_message(message)
         except socket.error:
@@ -64,7 +64,7 @@ class Connection(Thread):
             else:
                 self.send_bad_request()
         except Exception as e:
-            print '[-]', e
+            Logger.log_error(e)
             self.send_server_error()
 
     def send_server_error(self):
