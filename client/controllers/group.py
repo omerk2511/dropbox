@@ -37,3 +37,23 @@ class GroupController(object):
                 }
             )
         )
+
+    @staticmethod
+    def update_group(group, token, name=None, owner=None):
+        request = {
+            'group': group,
+            'token': token
+        }
+
+        if name:
+            request['name'] = name
+
+        if owner:
+            request['owner'] = owner
+
+        return Connection().send_recieve(
+            Message(
+                Codes.UPDATE_GROUP,
+                request
+            )
+        )
