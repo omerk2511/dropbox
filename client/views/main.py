@@ -22,8 +22,6 @@ class Main(Frame):
         self.user_data = Data().get_user_data()
 
         if self.elements:
-            # update the user data based elements
-
             self.elements['title']['text'] = 'Dropbox - ' + self.user_data['username']
 
             try:
@@ -52,8 +50,6 @@ class Main(Frame):
 
         top_frame = Frame(self, bg='#003399')
         top_frame.grid(row=0, columnspan=2, sticky='NEW')
-
-        # LOGO
 
         self.elements['title'] = Label(top_frame, text='Dropbox - ' + self.user_data['username'],
             padx=10, pady=10, fg='#ffffff', bg='#003399', font=('Arial', 22))
@@ -181,6 +177,12 @@ class Main(Frame):
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
 
+        self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change File Name', font=('Arial', 14), command=self.change_file_name)
+
+        self.elements['reupload_file_button'] = Button(self.elements['current_file_frame'],
+            text='Reupload File', font=('Arial', 14), command=self.reupload_file)
+
         self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
 
@@ -237,6 +239,8 @@ class Main(Frame):
 
         self.elements['download_directory_button'].pack_forget()
         self.elements['delete_button'].pack_forget()
+        self.elements['change_file_name_button'].pack_forget()
+        self.elements['reupload_file_button'].pack_forget()
 
         if file_id:
             self.current_file = file_id
@@ -255,6 +259,10 @@ class Main(Frame):
                 'owner' in self.selected_group and 
                 self.selected_group['owner']['id'] == Data().get_user_data()['id']):
                 self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+
+            if FileController.is_file_editor(self.current_file, Data().get_token()):
+                self.elements['change_file_name_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+                self.elements['reupload_file_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         if directory_id:
             self.currently_selected_file = self.elements['directory_label_' + str(directory_id)]
@@ -324,6 +332,12 @@ class Main(Frame):
 
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
+
+        self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change File Name', font=('Arial', 14), command=self.change_file_name)
+
+        self.elements['reupload_file_button'] = Button(self.elements['current_file_frame'],
+            text='Reupload File', font=('Arial', 14), command=self.reupload_file)
 
         self.elements['file_buttons_frame'] = Frame(self.elements['files_frame'])
         self.elements['file_buttons_frame'].pack(side=BOTTOM, expand=False, fill=X)
@@ -620,3 +634,9 @@ class Main(Frame):
 
     def open_admin(self):
         self.parent.show_frame('admin')
+
+    def change_file_name(self):
+        pass
+
+    def reupload_file(self):
+        pass

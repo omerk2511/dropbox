@@ -46,3 +46,18 @@ class FileController(object):
                 }
             )
         )
+
+    @staticmethod
+    def is_file_editor(file_id, token):
+        try:
+            return Connection().send_recieve(
+                Message(
+                    Codes.IS_FILE_EDITOR,
+                    {
+                        'token': token,
+                        'file': file_id
+                    }
+                )
+            ).payload['is_file_editor']
+        except:
+            return False

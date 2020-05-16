@@ -104,7 +104,7 @@ IS_FILE_EDITOR_PAYLOAD = [
 @validator(IS_FILE_EDITOR_PAYLOAD)
 @existing_file
 @in_file_context
-def is_file_editor(payload, user):
+def get_is_file_editor(payload, user):
     return Message(
         Codes.SUCCESS,
         {
