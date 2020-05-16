@@ -483,9 +483,8 @@ class Main(Frame):
                 self.select_group()
                 self.select_directory(file_directory)
             else:
-                self.parent.display_error(response.payload['message'])
-                
-        if self.current_directory:
+                self.parent.display_error(response.payload['message'])       
+        elif self.current_directory:
             response = DirectoryController.delete_directory(self.current_directory,
                 Data().get_token())
 
