@@ -17,7 +17,7 @@ class Connection(Thread):
 
         self.stop = Event()
 
-        print '[+]', self.address, 'has connected'
+        Logger.log_activity(self.address + ' has connected!')
 
     def run(self):
         while True:
@@ -29,7 +29,7 @@ class Connection(Thread):
         # should clean itself from Server connections list
 
         self.socket.close()
-        print '[-]', self.address, 'has disconnected'
+        Logger.log_activity(self.address + ' has disconnected')
 
     def iteration(self):
         should_stop = self.stop.wait(EVENT_TIMEOUT)
@@ -44,7 +44,7 @@ class Connection(Thread):
                 return True
 
             message = Message.deserialize(data)
-            Logger.log_request(message)
+            Logger.log_activity(message)
 
             self.handle_message(message)
         except socket.error:

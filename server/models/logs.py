@@ -28,8 +28,14 @@ class Logs(object):
     def create(log_type, message):
         current_logs = Logs.get()
 
-        if len(current_logs) == MAX_LOGS:
-            Logs.delete(current_logs[0][0])
+        errors_logs = [log for log in current_logs if log[1] == 'error']
+        activity_logs = [log for log in current_logs if log[1] == 'activity']
+
+        if log_type == 'error' and len(erorr_logs) == MAX_LOGS:
+            Logs.delete(error_logs[0][0])
+        
+        if log_type == 'activity' and len(activity_logs) == MAX_LOGS:
+            Logs.delete(activity_logs[0][0])
 
         database.execute(
             'INSERT INTO logs (type, message) VALUES (?, ?)',

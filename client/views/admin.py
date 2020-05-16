@@ -39,19 +39,19 @@ class Admin(Frame):
             yscrollcommand=errors_scrollbar.set)
         self.elements['errors_listbox'].pack(side=TOP, anchor=NW, expand=True, fill=BOTH)
 
-        requests_frame = Frame(self)
-        requests_frame.pack(expand=True, fill=BOTH, padx=70, pady=(15, 40))
+        activity_frame = Frame(self)
+        activity_frame.pack(expand=True, fill=BOTH, padx=70, pady=(15, 40))
 
-        self.elements['requests_label'] = Label(requests_frame, text='Requests:',
+        self.elements['activity_label'] = Label(activity_frame, text='Activity:',
             font=('Arial', 18))
-        self.elements['requests_label'].pack(side=TOP, anchor=NW, pady=5)
+        self.elements['activity_label'].pack(side=TOP, anchor=NW, pady=5)
 
-        requests_scrollbar = Scrollbar(requests_frame)
-        requests_scrollbar.pack(side=RIGHT, fill=Y)
+        activity_scrollbar = Scrollbar(activity_frame)
+        activity_scrollbar.pack(side=RIGHT, fill=Y)
 
-        self.elements['requests_listbox'] = Listbox(requests_frame, font=('Arial', 14),
-            yscrollcommand=requests_scrollbar.set)
-        self.elements['requests_listbox'].pack(side=TOP, anchor=NW, expand=True, fill=BOTH)
+        self.elements['activity_listbox'] = Listbox(activity_frame, font=('Arial', 14),
+            yscrollcommand=activity_scrollbar.set)
+        self.elements['activity_listbox'].pack(side=TOP, anchor=NW, expand=True, fill=BOTH)
 
     def initialize(self):
         admin_data_response = AdminDataController.get_admin_data(Data().get_token())
@@ -67,10 +67,10 @@ class Admin(Frame):
             self.admin_data['used_space']) + 'MB'
 
         self.elements['errors_listbox'].delete(0, END)
-        self.elements['requests_listbox'].delete(0, END)
+        self.elements['activity_listbox'].delete(0, END)
 
         for log in self.admin_data['logs']:
             if log['type'] == 'error':
                 self.elements['errors_listbox'].insert(END, log['message'])
-            elif log['type'] == 'request':
-                self.elements['requests_listbox'].insert(END, log['message'])
+            elif log['type'] == 'activity':
+                self.elements['activity_listbox'].insert(END, log['message'])
