@@ -92,7 +92,14 @@ class GroupSettings(Frame):
             self.parent.display_error(response.payload['message'])
 
     def kick_user(self, user_id):
-        print 'kicking user', user_id
+        response = GroupController.kick_group_user(self.current_group_data['id'],
+            user_id, Data().get_token())
+
+        if response.code == Codes.SUCCESS:
+            self.parent.display_info('The user has been kick successfully!')
+            self.initialize()
+        else:
+            self.parent.display_error(response.payload['message'])
 
     def update_group_name(self):
         group_name = self.elements['group_name_entry'].get()

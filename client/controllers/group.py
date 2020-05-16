@@ -57,3 +57,16 @@ class GroupController(object):
                 request
             )
         )
+
+    @staticmethod
+    def kick_group_user(group, user, token):
+        return Connection().send_recieve(
+            Message(
+                Codes.KICK_GROUP_USER,
+                {
+                    'group': group,
+                    'user': user,
+                    'token': token
+                }
+            )
+        )
