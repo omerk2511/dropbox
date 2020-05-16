@@ -16,7 +16,6 @@ And for the client, just write: `python -m client.client`
 - [x] Permission Management
 - [x] Group Management
 - [x] Admin Interface
-- [ ] File Compression
 
 ## Screenshots
 (To Be Added)
