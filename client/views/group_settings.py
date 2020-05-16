@@ -36,10 +36,63 @@ class GroupSettings(Frame):
             activeforeground='#ffffff', command=self.update_group_name)
         self.elements['update_group_name_button'].pack(side=TOP, expand=True, fill=X, padx=6)
 
+        self.elements['group_users_frame'] = Frame(self)
+        self.elements['group_users_frame'].pack(expand=True, fill=BOTH, padx=70, pady=40)
+
+        self.elements['group_user_frames'] = []
+
     def initialize(self):
         self.current_group_data = Data().get_current_group()
 
-        # display the users
+        for group_user_frame in self.elements['group_user_frames']:
+            group_user_frame.pack_forget()
+
+        self.elements['group_user_frames'] = []
+
+        self.elements['group_users_frame'].pack_forget()
+        self.elements['group_users_frame'].pack(expand=True, fill=BOTH, padx=70, pady=40)
+
+        users = self.current_group_data['users']
+
+        for user in users:
+            user_frame = Frame(self.elements['group_users_frame'], bg='gray')
+            user_frame.pack(side=TOP, expand=False, fill=X, pady=10)
+
+            user_label = Label(user_frame, font=('Arial', 18), bg='gray',
+                text='%s (%s)' % (user['username'], user['full_name']))
+            user_label.pack(side=LEFT, padx=20, pady=10)
+
+            if user['id'] != Data().get_user_data()['id']:
+                transfer_ownership_button = Button(user_frame, text='Transfer Ownership',
+                    font=('Arial', 16), bg='#004d00', fg='#ffffff', activebackground='#006600',
+                    activeforeground='#ffffff', command=self.generate_transfer_ownership(user['id']))
+                transfer_ownership_button.pack(side=RIGHT, padx=20, pady=10)
+
+                kick_user_button = Button(user_frame, text='Kick User',
+                    font=('Arial', 16), bg='#990000', fg='#ffffff', activebackground='#b30000',
+                    activeforeground='#ffffff', command=self.generate_kick_user(user['id']))
+                kick_user_button.pack(side=RIGHT, pady=10)
+
+            self.elements['group_user_frames'].append(user_frame)
+
+    def generate_transfer_ownership(self, user_id):
+        return lambda: self.transfer_ownership(user_id)
+
+    def generate_kick_user(self, user_id):
+        return lambda: self.kick_user(user_id)
+
+    def transfer_ownership(self, user_id):
+        response = GroupController.update_group(self.current_group_data['id'],
+            Data().get_token(), owner=user_id)
+
+        if response.code == Codes.SUCCESS:
+            self.parent.display_info('The group ownership has been transferred successfully!')
+            self.parent.return_frame()
+        else:
+            self.parent.display_error(response.payload['message'])
+
+    def kick_user(self, user_id):
+        print 'kicking user', user_id
 
     def update_group_name(self):
         group_name = self.elements['group_name_entry'].get()
@@ -47,7 +100,7 @@ class GroupSettings(Frame):
 
         if group_name:
             response = GroupController.update_group(self.current_group_data['id'],
-                Data().get_token(), group_name)
+                Data().get_token(), name=group_name)
 
             if response.code == Codes.SUCCESS:
                 self.parent.display_info('The group name has been updated successfully!')
