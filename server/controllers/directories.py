@@ -108,9 +108,9 @@ def update_directory(payload, user):
 
     if 'name' in payload:
         if group:
-            directories = Directories.get_user_directories(user['id'])
-        else:
             directories = Directories.get_group_directories(group)
+        else:
+            directories = Directories.get_user_directories(user['id'])
 
         if payload['name'] in [directory[1] for directory in directories]:
             return Message(

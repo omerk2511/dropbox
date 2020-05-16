@@ -78,7 +78,7 @@ def directory_owner(func):
     return wrapper
 
 def is_directory_editor(directory_id, user_id):
-    is_editor = Editor.is_directory_editor(user_id, directory_id)
+    is_editor = Editors.is_directory_editor(user_id, directory_id)
     is_editor = is_editor or is_directory_owner(directory_id, user_id)
 
     return is_editor

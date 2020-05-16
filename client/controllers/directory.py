@@ -31,3 +31,16 @@ class DirectoryController(object):
                 }
             )
         )
+
+    @staticmethod
+    def update_directory_name(directory, name, token):
+        return Connection().send_recieve(
+            Message(
+                Codes.UPDATE_DIRECTORY,
+                {
+                    'directory': directory,
+                    'name': name,
+                    'token': token
+                }
+            )
+        )

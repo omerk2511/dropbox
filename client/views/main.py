@@ -183,6 +183,9 @@ class Main(Frame):
         self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
             text='Change File Name', font=('Arial', 14), command=self.change_file_name)
 
+        self.elements['change_directory_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change Directory Name', font=('Arial', 14), command=self.change_directory_name)
+
         self.elements['reupload_file_button'] = Button(self.elements['current_file_frame'],
             text='Reupload File', font=('Arial', 14), command=self.reupload_file)
 
@@ -244,6 +247,7 @@ class Main(Frame):
         self.elements['delete_button'].pack_forget()
         self.elements['editors_button'].pack_forget()
         self.elements['change_file_name_button'].pack_forget()
+        self.elements['change_directory_name_button'].pack_forget()
         self.elements['reupload_file_button'].pack_forget()
 
         if file_id:
@@ -302,6 +306,7 @@ class Main(Frame):
                     'owner' in self.selected_group and 
                     self.selected_group['owner']['id'] == Data().get_user_data()['id']):
                     self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+                    self.elements['change_directory_name_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
         self.currently_selected_file['bg'] = 'gray'
 
@@ -346,6 +351,9 @@ class Main(Frame):
 
         self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
             text='Change File Name', font=('Arial', 14), command=self.change_file_name)
+
+        self.elements['change_directory_name_button'] = Button(self.elements['current_file_frame'],
+            text='Change Directory Name', font=('Arial', 14), command=self.change_directory_name)
 
         self.elements['reupload_file_button'] = Button(self.elements['current_file_frame'],
             text='Reupload File', font=('Arial', 14), command=self.reupload_file)
@@ -672,11 +680,34 @@ class Main(Frame):
 
             if response.code == Codes.SUCCESS:
                 self.parent.display_info('Changed the file name successfully!')
+
                 self.elements['file_label_' + str(self.current_file)]['text'] = file_name
+                self.elements['current_file_name_label']['text'] = file_name
             else:
                 self.parent.display_error(response.payload['message'])
         else:
             self.parent.display_error('You have to give the file a name!')
+
+    def change_directory_name(self):
+        directory_name = askstring('Required Input',
+            'Enter a new directory name:', parent=self)
+
+        if directory_name:
+            if not directory_name.endswith('/'):
+                directory_name += '/'
+
+            response = DirectoryController.update_directory_name(self.current_directory,
+                directory_name, Data().get_token())
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('Changed the directory name successfully!')
+
+                self.elements['directory_label_' + str(self.current_directory)]['text'] = directory_name
+                self.elements['current_file_name_label']['text'] = directory_name
+            else:
+                self.parent.display_error(response.payload['message'])
+        else:
+            self.parent.display_error('You have to give the directory a name!')
 
     def reupload_file(self):
         file_name = askopenfilename(initialdir='/', title='Select File')
