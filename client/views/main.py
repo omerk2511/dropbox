@@ -1,6 +1,7 @@
+import os
 from Tkinter import *
 from tkSimpleDialog import askstring
-from tkFileDialog import asksaveasfilename, askopenfilename
+from tkFileDialog import asksaveasfilename, askopenfilename, askdirectory
 
 from common import Codes
 from ..handlers.data import Data
@@ -166,6 +167,9 @@ class Main(Frame):
         self.elements['download_file_button'] = Button(self.elements['current_file_frame'],
             text='Download File', font=('Arial', 14), command=self.download_file)
 
+        self.elements['download_directory_button'] = Button(self.elements['current_file_frame'],
+            text='Download Directory', font=('Arial', 14), command=self.download_directory)
+
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
 
@@ -223,6 +227,7 @@ class Main(Frame):
         if self.currently_selected_file:
             self.currently_selected_file['bg'] = 'SystemButtonFace'
 
+        self.elements['download_directory_button'].pack_forget()
         self.elements['delete_button'].pack_forget()
 
         if file_id:
@@ -252,6 +257,7 @@ class Main(Frame):
                 self.elements['current_file_owner_label']['text'] = ''
 
                 self.elements['download_file_button'].pack_forget()
+                self.elements['download_directory_button'].pack_forget()
                 self.elements['delete_button'].pack_forget()
             else:
                 self.current_file = None
@@ -263,6 +269,8 @@ class Main(Frame):
                     if len(directory_info['name']) < 14 else directory_info['name'][:11] + '...')
                 self.elements['current_file_type_label']['text'] = 'Type: ' + directory_info['type']
                 self.elements['current_file_owner_label']['text'] = 'Owner: ' + directory_info['owner']['full_name']
+
+                self.elements['download_directory_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
                 self.elements['download_file_button'].pack_forget()
 
@@ -302,6 +310,9 @@ class Main(Frame):
 
         self.elements['download_file_button'] = Button(self.elements['current_file_frame'],
             text='Download File', font=('Arial', 14), command=self.download_file)
+
+        self.elements['download_directory_button'] = Button(self.elements['current_file_frame'],
+            text='Download Directory', font=('Arial', 14), command=self.download_directory)
 
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
@@ -423,6 +434,41 @@ class Main(Frame):
                     f.write(content)
 
                 self.parent.display_info('File downloaded successfully!')
+
+    def download_directory_files(self, path, files):
+        for f in files:
+            if f['type'] == 'file':
+                content = FileController.get_file_content(
+                    f['id'], Data().get_token())
+
+                with open(os.path.join(path, f['name']), 'wb') as fd:
+                    fd.write(content)
+
+            if f['type'] == 'directory':
+                new_directory_path = os.path.join(path, f['name'])
+
+                os.mkdir(new_directory_path)
+                self.download_directory_files(new_directory_path, f['files'])
+
+    def download_directory(self):
+        if self.current_directory:
+            directory_name = askdirectory()
+
+            if directory_name:
+                directories = self.selected_group['files']['files']
+                selected_directory = None
+
+                while directories and not selected_directory:
+                    if directories[0]['type'] == 'directory':
+                        if directories[0]['id'] == self.current_directory:
+                            selected_directory = directories[0]
+                        else:
+                            directories += directories[0]['files']
+                    
+                    directories = directories[1:]
+
+                self.download_directory_files(directory_name, selected_directory['files'])
+                self.parent.display_info('Directory downloaded successfully!')
 
     def delete_file(self):
         if self.current_file:
