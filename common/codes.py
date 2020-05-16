@@ -11,7 +11,6 @@ class Codes(object):
 
     CREATE_USER = 'create_user' #
     UPDATE_USER = 'update_user' #
-    DELETE_USER = 'delete_user'
     GET_USER_DATA = 'get_user_data' #
 
     CREATE_GROUP = 'create_group' #
@@ -31,9 +30,10 @@ class Codes(object):
     DELETE_DIRECTORY = 'delete_directory' #
 
     CREATE_FILE = 'create_file' #
-    UPDATE_FILE = 'update_file'
+    UPDATE_FILE = 'update_file' #
     DELETE_FILE = 'delete_file' #
     GET_FILE = 'get_file' #
+    IS_FILE_EDITOR = 'is_file_editor' #
 
     ADD_EDITOR = 'add_editor' #
     REMOVE_EDITOR = 'remove_editor' #
