@@ -73,3 +73,23 @@ class FileController(object):
                 }
             )
         )
+
+    @staticmethod
+    def update_file(file_id, token, name=None, content=None):
+        request = {
+            'token': token,
+            'file': file_id
+        }
+
+        if name:
+            request['name'] = name
+
+        if content:
+            request['content'] = base64.b64encode(content)
+
+        return Connection().send_recieve(
+            Message(
+                Codes.UPDATE_FILE,
+                request
+            )
+        )

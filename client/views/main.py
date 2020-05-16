@@ -177,6 +177,9 @@ class Main(Frame):
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
 
+        self.elements['editors_button'] = Button(self.elements['current_file_frame'],
+            text='Editors', font=('Arial', 14), command=self.open_editors)
+
         self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
             text='Change File Name', font=('Arial', 14), command=self.change_file_name)
 
@@ -239,6 +242,7 @@ class Main(Frame):
 
         self.elements['download_directory_button'].pack_forget()
         self.elements['delete_button'].pack_forget()
+        self.elements['editors_button'].pack_forget()
         self.elements['change_file_name_button'].pack_forget()
         self.elements['reupload_file_button'].pack_forget()
 
@@ -259,6 +263,10 @@ class Main(Frame):
                 'owner' in self.selected_group and 
                 self.selected_group['owner']['id'] == Data().get_user_data()['id']):
                 self.elements['delete_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
+                
+            if file_info['owner']['id'] == Data().get_user_data()['id'] and \
+                self.selected_group != self.user_data:
+                self.elements['editors_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
 
             if FileController.is_file_editor(self.current_file, Data().get_token()):
                 self.elements['change_file_name_button'].pack(side=TOP, expand=False, fill=X, padx=10, pady=(20, 0))
@@ -332,6 +340,9 @@ class Main(Frame):
 
         self.elements['delete_button'] = Button(self.elements['current_file_frame'],
             text='Delete', font=('Arial', 14), command=self.delete_file)
+
+        self.elements['editors_button'] = Button(self.elements['current_file_frame'],
+            text='Editors', font=('Arial', 14), command=self.open_editors)
 
         self.elements['change_file_name_button'] = Button(self.elements['current_file_frame'],
             text='Change File Name', font=('Arial', 14), command=self.change_file_name)
@@ -635,8 +646,46 @@ class Main(Frame):
     def open_admin(self):
         self.parent.show_frame('admin')
 
-    def change_file_name(self):
+    def open_editors(self):
         pass
 
+    def change_file_name(self):
+        file_name = askstring('Required Input',
+            'Enter a new file name:', parent=self)
+
+        if file_name:
+            file_extension = None
+
+            splitted_file = self.elements['file_label_' +
+                str(self.current_file)]['text'].split('.')
+
+            if len(splitted_file) > 1:
+                file_extension = splitted_file[-1]
+
+            if file_extension:
+                if not file_name.endswith(file_extension):
+                    file_name += '.' + file_extension
+
+            response = FileController.update_file(self.current_file, Data().get_token(),
+                name=file_name)
+
+            if response.code == Codes.SUCCESS:
+                self.parent.display_info('Changed the file name successfully!')
+                self.elements['file_label_' + str(self.current_file)]['text'] = file_name
+            else:
+                self.parent.display_error(response.payload['message'])
+        else:
+            self.parent.display_error('You have to give the file a name!')
+
     def reupload_file(self):
-        pass
+        file_name = askopenfilename(initialdir='/', title='Select File')
+
+        if file_name:
+            with open(file_name, 'rb') as f:
+                response = FileController.update_file(self.current_file, Data().get_token(),
+                    content=f.read())
+
+                if response.code == Codes.SUCCESS:
+                    self.parent.display_info('The file was successfully reuploaded!')
+                else:
+                    self.parent.display_error(response.payload['message'])
