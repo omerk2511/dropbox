@@ -19,3 +19,15 @@ class DirectoryController(object):
                 request
             )
         )
+
+    @staticmethod
+    def delete_directory(directory, token):
+        return Connection().send_recieve(
+            Message(
+                Codes.DELETE_DIRECTORY,
+                {
+                    'directory': directory,
+                    'token': token
+                }
+            )
+        )
