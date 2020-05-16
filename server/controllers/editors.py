@@ -1,7 +1,7 @@
 from common import Codes, Message
 from controller import controller
-from validators import validator, file_exists, directory_exists, existing_editor
-from auth import authenticated, is_file_owner, is_in_file_context, is_directory_owner, is_in_directory_context
+from validators import validator, file_exists, directory_exists, existing_editor, existing_file
+from auth import authenticated, is_file_owner, is_in_file_context, in_file_context, is_directory_owner, is_in_directory_context, is_file_editor
 from ..models import Users, Editors
 
 ADD_EDITOR_PAYLOAD = [
@@ -103,4 +103,82 @@ def remove_editor(payload, user):
     return Message(
         Codes.SUCCESS,
         { 'message': 'The editor has been removed successfully.' }
+    )
+
+IS_FILE_EDITOR_PAYLOAD = [
+    ('file', [int])
+]
+
+@controller(Codes.IS_FILE_EDITOR)
+@authenticated
+@validator(IS_FILE_EDITOR_PAYLOAD)
+@existing_file
+@in_file_context
+def get_is_file_editor(payload, user):
+    return Message(
+        Codes.SUCCESS,
+        {
+            'message': 'Retrieved the file editor data successfully.',
+            'is_file_editor': is_file_editor(payload['file'], user['id'])
+        }
+    )
+
+GET_EDITORS_PAYLOAD = [
+    [
+        ('file', [int]),
+        ('directory', [int])
+    ]
+]
+
+@controller(Codes.GET_EDITORS)
+@authenticated
+@validator(GET_EDITORS_PAYLOAD)
+def get_editors(payload, user):
+    if 'file' in payload and 'directory' in payload:
+        return Message(
+            Codes.BAD_REQUEST,
+            { 'message': 'Invalid payload. You should supply either a file or a directory, not both.' }
+        )
+
+    if 'file' in payload:
+        if not file_exists(payload['file']):
+            return Message(
+                Codes.NOT_FOUND,
+                { 'message': 'The supplied file does not exist.' }
+            )
+
+        if not is_file_owner(payload['file'], user['id']):
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message':'You cannot get the editors of a file you do not own.' }
+            )
+
+        editors = Editors.get_file_editors(payload['file'])
+
+    if 'directory' in payload:
+        if not directory_exists(payload['directory']):
+            return Message(
+                Codes.NOT_FOUND,
+                { 'message': 'The supplied directory does not exist.' }
+            )
+
+        if not is_directory_editor(paylaod['directory'], user['id']):
+            return Message(
+                Codes.FORBIDDEN,
+                { 'message': 'You cannot get the editors of a directory you do not own.' }
+            )
+
+        editors = Editors.get_directory_editors(payload['directory'])
+
+    return Message(
+        Codes.SUCCESS,
+        {
+            'message': 'The editors have been retrieved successfully.',
+            'editors': [
+                {
+                    'id': editor[0],
+                    'user': Users.get_formatted(editor[1])
+                } for editor in editors
+            ]
+        }
     )

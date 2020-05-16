@@ -94,21 +94,3 @@ def get_file(payload, user):
             'content': content
         }
     )
-
-IS_FILE_EDITOR_PAYLOAD = [
-    ('file', [int])
-]
-
-@controller(Codes.IS_FILE_EDITOR)
-@authenticated
-@validator(IS_FILE_EDITOR_PAYLOAD)
-@existing_file
-@in_file_context
-def get_is_file_editor(payload, user):
-    return Message(
-        Codes.SUCCESS,
-        {
-            'message': 'Retrieved the file editor data successfully.',
-            'is_file_editor': is_file_editor(payload['file'], user['id'])
-        }
-    )

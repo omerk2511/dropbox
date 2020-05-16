@@ -33,10 +33,11 @@ class Codes(object):
     UPDATE_FILE = 'update_file' #
     DELETE_FILE = 'delete_file' #
     GET_FILE = 'get_file' #
-    IS_FILE_EDITOR = 'is_file_editor' #
 
     ADD_EDITOR = 'add_editor' #
     REMOVE_EDITOR = 'remove_editor' #
+    GET_EDITORS = 'get_editors' #
+    IS_FILE_EDITOR = 'is_file_editor' #
 
     GET_ADMIN_DATA = 'get_admin_data' #
 
