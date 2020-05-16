@@ -542,14 +542,16 @@ class Main(Frame):
             else:
                 self.parent.display_error(response.payload['message'])       
         elif self.current_directory:
-            response = DirectoryController.delete_directory(self.current_directory,
+            directory_to_delete = self.current_directory
+
+            self.select_directory(-1)
+            parent_directory = self.current_directory
+
+            response = DirectoryController.delete_directory(directory_to_delete,
                 Data().get_token())
 
             if response.code == Codes.SUCCESS:
                 self.parent.display_info('The directory was deleted successfully!')
-
-                self.select_directory(-1)
-                parent_directory = self.current_directory
 
                 self.select_group()
                 self.select_directory(parent_directory)
@@ -685,7 +687,7 @@ class Main(Frame):
                 file_extension = splitted_file[-1]
 
             if file_extension:
-                if not file_name.endswith(file_extension):
+                if not file_name.endswith('.' + file_extension):
                     file_name += '.' + file_extension
 
             response = FileController.update_file(self.current_file, Data().get_token(),
