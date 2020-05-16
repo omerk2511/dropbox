@@ -7,6 +7,12 @@ class Logs(object):
     @staticmethod
     @initializer
     def initialize():
+        """
+        Initializes the logs table
+        args: none
+        ret: none
+        """
+
         database.execute(
             '''
             CREATE TABLE IF NOT EXISTS logs (
@@ -19,6 +25,12 @@ class Logs(object):
 
     @staticmethod
     def get():
+        """
+        Gets all the logs
+        args: none
+        ret: logs
+        """
+
         return database.fetch(
             'SELECT * FROM logs',
             ()
@@ -26,6 +38,12 @@ class Logs(object):
 
     @staticmethod
     def create(log_type, message):
+        """
+        Creates a log
+        args: log_type, message
+        ret: none
+        """
+
         current_logs = Logs.get()
 
         error_logs = [log for log in current_logs if log[1] == 'error']
@@ -44,6 +62,12 @@ class Logs(object):
 
     @staticmethod
     def delete(log_id):
+        """
+        Deletes a log
+        args: log_id
+        ret: none
+        """
+
         database.execute(
             'DELETE FROM logs WHERE id = ?',
             (log_id,)

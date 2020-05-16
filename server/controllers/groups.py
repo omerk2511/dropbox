@@ -14,6 +14,12 @@ CREATE_GROUP_PAYLOAD = [
 @authenticated
 @validator(CREATE_GROUP_PAYLOAD)
 def create_group(payload, user):
+    """
+    Creates a group
+    args: payload, user
+    ret: response
+    """
+
     try:
         group_id = Groups.create(payload['name'], user['id'])
         
@@ -55,6 +61,12 @@ UPDATE_GROUP_PAYLOAD = [
 @existing_group
 @group_owner
 def update_group(payload, user):
+    """
+    Updates a group
+    args: payload, user
+    ret: response
+    """
+
     if 'name' in payload:
         Groups.update_name(payload['group'], payload['name'])
 
@@ -69,23 +81,6 @@ def update_group(payload, user):
         { 'message': 'The group has been updated successfully.' }
     )
 
-DELETE_GROUP_PAYLOAD = [
-    ('group', [int])
-]
-
-@controller(Codes.DELETE_GROUP)
-@authenticated
-@validator(DELETE_GROUP_PAYLOAD)
-@existing_group
-@group_owner
-def delete_group(payload, user):
-    Groups.delete(payload['group']) # also delete files later
-
-    return Message(
-        Codes.SUCCESS,
-        { 'message': 'The group has been deleted successfully.' }
-    )
-
 GET_GROUP_DATA_PAYLOAD = [
     ('group', [int])
 ]
@@ -96,6 +91,12 @@ GET_GROUP_DATA_PAYLOAD = [
 @existing_group
 @group_user
 def get_group_data(payload, user):
+    """
+    Returns a group data
+    args: payload, user
+    ret: response
+    """
+
     group = Groups.get(payload['group'])[0]
     owner = Users.get(group[2])[0]
 
@@ -141,6 +142,12 @@ LEAVE_GROUP_PAYLOAD = [
 @existing_group
 @group_user
 def leave_group(payload, user):
+    """
+    Leaves a group
+    args: payload, user
+    ret: response
+    """
+
     group = Groups.get(payload['group'])[0]
     owner = group[2]
 
@@ -150,7 +157,6 @@ def leave_group(payload, user):
             { 'message': 'You can\'t leave a group that you own.' }
         )
 
-    # also update the files' owner
     Directories.update_owner_in_group(user['id'], owner, payload['group'])
 
     UsersGroups.delete(user['id'], payload['group'])
@@ -171,6 +177,12 @@ KICK_GROUP_USER_PAYLOAD = [
 @existing_group
 @group_owner
 def kick_group_user(payload, user):
+    """
+    Kicks a user
+    args: payload, user
+    ret: response
+    """
+
     if payload['user'] == user['id']:
         return Message(
             Codes.BAD_REQUEST,

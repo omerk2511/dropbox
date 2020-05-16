@@ -15,7 +15,6 @@ class Codes(object):
 
     CREATE_GROUP = 'create_group' #
     UPDATE_GROUP = 'update_group' #
-    DELETE_GROUP = 'delete_group' #
     GET_GROUP_DATA = 'get_group_data' #
     LEAVE_GROUP = 'leave_group' #
     KICK_GROUP_USER = 'kick_group_user' #

@@ -6,6 +6,12 @@ HOST = 'localhost'
 PORT = 8000
 
 def close():
+    """
+    Closes the client
+    args: none
+    ret: none
+    """
+
     connection.socket.close()
     gui.destroy()
 

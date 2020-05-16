@@ -16,6 +16,12 @@ ADD_EDITOR_PAYLOAD = [
 @authenticated
 @validator(ADD_EDITOR_PAYLOAD)
 def add_editor(payload, user):
+    """
+    Adds an editor
+    args: payload, user
+    ret: response
+    """
+
     if 'file' in payload and 'directory' in payload:
         return Message(
             Codes.BAD_REQUEST,
@@ -86,6 +92,12 @@ REMOVE_EDITOR_PAYLOAD = [
 @validator(REMOVE_EDITOR_PAYLOAD)
 @existing_editor
 def remove_editor(payload, user):
+    """
+    Removes an editor
+    args: payload, user
+    ret: response
+    """
+
     editor = Editors.get(payload['editor'])[0]
 
     file_id = editor[2]
@@ -121,6 +133,12 @@ IS_FILE_EDITOR_PAYLOAD = [
 @existing_file
 @in_file_context
 def get_is_file_editor(payload, user):
+    """
+    Returns wheter the current user is an editor of a specific file
+    args: payload, user
+    ret: response
+    """
+
     return Message(
         Codes.SUCCESS,
         {
@@ -140,6 +158,12 @@ GET_EDITORS_PAYLOAD = [
 @authenticated
 @validator(GET_EDITORS_PAYLOAD)
 def get_editors(payload, user):
+    """
+    Gets all the user of a file or a directory
+    args: payload, user
+    ret: response
+    """
+
     if 'file' in payload and 'directory' in payload:
         return Message(
             Codes.BAD_REQUEST,

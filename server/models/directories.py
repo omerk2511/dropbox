@@ -6,6 +6,12 @@ class Directories(object):
     @staticmethod
     @initializer
     def initialize():
+        """
+        Initializes the directories table
+        args: none
+        ret: none
+        """
+
         database.execute(
             '''
             CREATE TABLE IF NOT EXISTS directories (
@@ -23,6 +29,12 @@ class Directories(object):
 
     @staticmethod
     def get(directory_id):
+        """
+        Gets all directories with a given id
+        args: directory_id
+        ret: directories
+        """
+
         return database.fetch(
             'SELECT * FROM directories WHERE id = ?',
             (directory_id,)
@@ -30,6 +42,12 @@ class Directories(object):
 
     @staticmethod
     def get_sub_directories(parent):
+        """
+        Gets all the directories with a given parent
+        args: parent
+        ret: directories
+        """
+
         return database.fetch(
             '''
             SELECT * FROM directories WHERE parent = ?
@@ -39,6 +57,12 @@ class Directories(object):
 
     @staticmethod
     def get_user_directories(user_id):
+        """
+        Gets all the directories of a given user
+        args: user_id
+        ret: directories
+        """
+
         return database.fetch(
             '''
             SELECT * FROM directories d
@@ -50,6 +74,12 @@ class Directories(object):
 
     @staticmethod
     def get_user_directories_under_parent(user_id, parent):
+        """
+        Gets all the directories of a given user under a given parent
+        args: user_id, parent
+        ret: directories
+        """
+
         return database.fetch(
             '''
             SELECT * FROM directories d
@@ -61,6 +91,12 @@ class Directories(object):
 
     @staticmethod
     def get_group_directories(group_id):
+        """
+        Gets all the directories in a given group
+        args: group_id
+        ret: directories
+        """
+
         return database.fetch(
             '''
             SELECT * FROM directories d
@@ -72,6 +108,12 @@ class Directories(object):
 
     @staticmethod
     def get_group_directories_under_parent(group_id, parent):
+        """
+        Gets all the directories in a given group under a given parent
+        args: group_id, parent
+        ret: directories
+        """
+
         return database.fetch(
             '''
             SELECT * FROM directories d
@@ -83,16 +125,34 @@ class Directories(object):
 
     @staticmethod
     def get_user_directory_tree(user_id):
+        """
+        Returns the directory tree of a user
+        args: user_id
+        ret: directory_tree
+        """
+
         directories = Directories.get_user_directories(user_id)
         return Directories.get_directory_tree(directories)
 
     @staticmethod
     def get_group_directory_tree(group_id):
+        """
+        Returns the directory tree of a group
+        args: group_id
+        ret: directory_tree
+        """
+
         directories = Directories.get_group_directories(group_id)
         return Directories.get_directory_tree(directories)
 
     @staticmethod
     def get_directory_tree(directories):
+        """
+        Turns a directory list into a directory tree
+        args: directories
+        ret: directory_tree
+        """
+
         root = [directory for directory in directories if directory[4] == None][0]
         directories = [directory for directory in directories if directory[4] != None]
 
@@ -150,6 +210,12 @@ class Directories(object):
 
     @staticmethod
     def create(name, owner, group=None, parent=None):
+        """
+        Creates a directory
+        args: name, owner, group, parent
+        ret: created_directory_id
+        """
+
         return database.execute(
             'INSERT INTO directories(name, owner, `group`, parent) VALUES (?, ?, ?, ?)',
             (name, owner, group, parent)
@@ -157,6 +223,12 @@ class Directories(object):
 
     @staticmethod
     def update_owner_in_group(old_owner, new_owner, group):
+        """
+        Updates an owner in a group
+        args: old_owner, new_owner, group
+        ret: none
+        """
+        
         database.execute(
             'UPDATE directories SET owner = ? WHERE owner = ? AND `group` = ?',
             (new_owner, old_owner, group)
@@ -164,6 +236,12 @@ class Directories(object):
 
     @staticmethod
     def update_name(directory_id, name):
+        """
+        Updates the name of a directory
+        args: directory_id, name
+        ret: none
+        """
+
         database.execute(
             'UPDATE directories SET name = ? WHERE id = ?',
             (name, directory_id)
@@ -171,6 +249,12 @@ class Directories(object):
 
     @staticmethod
     def update_owner(directory_id, owner):
+        """
+        Updates the owner of a directory
+        args: directory_id, owner
+        ret: none
+        """
+
         database.execute(
             'UPDATE directories SET owner = ? WHERE id = ?',
             (owner, directory_id)
@@ -178,6 +262,12 @@ class Directories(object):
 
     @staticmethod
     def update_parent(directory_id, parent):
+        """
+        Updates the parent of a directory
+        args: directory_id, parent
+        ret: none
+        """
+
         database.execute(
             'UPDATE directories SET parent = ? WHERE id = ?',
             (parent, directory_id)
@@ -185,6 +275,12 @@ class Directories(object):
 
     @staticmethod
     def delete(directory_id):
+        """
+        Deletes a directory
+        args: directory_id
+        ret: none
+        """
+
         database.execute(
             'DELETE FROM directories WHERE id = ?',
             (directory_id,)

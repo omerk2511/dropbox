@@ -4,6 +4,12 @@ from ..handlers.connection import Connection
 class GroupController(object):
     @staticmethod
     def create_group(name, token):
+        """
+        Creates a group
+        args: name, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.CREATE_GROUP,
@@ -16,6 +22,12 @@ class GroupController(object):
 
     @staticmethod
     def get_group_data(group, token):
+        """
+        Gets a group data
+        args: group, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.GET_GROUP_DATA,
@@ -28,6 +40,12 @@ class GroupController(object):
 
     @staticmethod
     def leave_group(group, token):
+        """
+        Leaves a group
+        args: group, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.LEAVE_GROUP,
@@ -40,6 +58,12 @@ class GroupController(object):
 
     @staticmethod
     def update_group(group, token, name=None, owner=None):
+        """
+        Updates a group
+        args: group, token, name, owner
+        ret: response
+        """
+
         request = {
             'group': group,
             'token': token
@@ -60,6 +84,12 @@ class GroupController(object):
 
     @staticmethod
     def kick_group_user(group, user, token):
+        """
+        Kicks a group user
+        args: group, user, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.KICK_GROUP_USER,

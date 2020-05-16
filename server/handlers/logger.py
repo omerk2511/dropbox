@@ -4,6 +4,12 @@ from ..models import Logs
 class Logger(object):
     @staticmethod
     def log_activity(message):
+        """
+        Logs an activity message
+        args: message
+        ret: none
+        """
+
         if type(message) == Message:
             if message.code == Codes.PING:
                 return
@@ -20,5 +26,11 @@ class Logger(object):
 
     @staticmethod
     def log_error(error):
+        """
+        Logs an error message
+        args: message
+        ret: none
+        """
+
         print '[-]', error
         Logs.create('error', str(error))

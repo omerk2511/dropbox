@@ -10,6 +10,12 @@ EVENT_TIMEOUT = 0.00000001
 
 class Connection(Thread):
     def __init__(self, socket, address, server_connections):
+        """
+        Creates a Connection object
+        args: self, socket, address, server_connections
+        ret: none
+        """
+
         Thread.__init__(self)
 
         self.socket = socket
@@ -22,6 +28,12 @@ class Connection(Thread):
         Logger.log_activity(self.address + ' has connected!')
 
     def run(self):
+        """
+        Runs the connection
+        args: self
+        ret: none
+        """
+
         while True:
             should_stop = self.iteration()
 
@@ -34,6 +46,12 @@ class Connection(Thread):
         Logger.log_activity(self.address + ' has disconnected')
 
     def iteration(self):
+        """
+        Does a connection iteration (checks for a user request and handles it)
+        args: self
+        ret: should_stop
+        """
+
         should_stop = self.stop.wait(EVENT_TIMEOUT)
 
         if should_stop:
@@ -57,6 +75,12 @@ class Connection(Thread):
         return False
 
     def handle_message(self, message):
+        """
+        Handles a user request
+        args: self, message
+        ret: none
+        """
+
         try:
             controller_func = get_controller_func(message.code)
 
@@ -70,6 +94,12 @@ class Connection(Thread):
             self.send_server_error()
 
     def send_server_error(self):
+        """
+        Sends a server error message
+        args: self
+        ret: none
+        """
+
         self.send_message(
             Message(
                 Codes.SERVER_ERROR,
@@ -78,6 +108,12 @@ class Connection(Thread):
         )
 
     def send_bad_request(self):
+        """
+        Sends a bad request message
+        args: self
+        ret: none
+        """
+
         self.send_message(
             Message(
                 Codes.BAD_REQUEST,
@@ -86,9 +122,21 @@ class Connection(Thread):
         )
 
     def send_message(self, message):
+        """
+        Sends a message to the user
+        args: self, message
+        ret: none
+        """
+
         self.socket.send(message.serialize())
 
     def get_data(self):
+        """
+        Recieves user data (of any size)
+        args: self
+        ret: data
+        """
+
         data = self.socket.recv(BUFFER_SIZE)
 
         if not data:

@@ -9,6 +9,12 @@ from ..config import FILES_PATH
 @controller(Codes.GET_ADMIN_DATA)
 @authenticated
 def get_admin_data(payload, user):
+    """
+    Returns the administration data
+    args: payload, user
+    ret: response
+    """
+
     if user['username'] != 'admin':
         return Message(
             Codes.FORBIDDEN,

@@ -18,6 +18,12 @@ INVITE_PAYLOAD = [
 @existing_group
 @group_owner
 def invite(payload, user):
+    """
+    Creates an invite
+    args: payload, user
+    ret: response
+    """
+
     try:
         invited_user = Users.get_by_username(payload['username'])[0]
     except:
@@ -57,6 +63,12 @@ INVITE_OPERATION_PAYLOAD = [
 @authenticated
 @validator(INVITE_OPERATION_PAYLOAD)
 def accept_invite(payload, user):
+    """
+    Accepts an invite
+    args: payload, user
+    ret: response
+    """
+
     try:
         invite = Invites.get(payload['invite'])[0]
     except:
@@ -83,6 +95,12 @@ def accept_invite(payload, user):
 @authenticated
 @validator(INVITE_OPERATION_PAYLOAD)
 def reject_invite(payload, user):
+    """
+    Rejects an invite
+    args: payload, user
+    ret: response
+    """
+
     try:
         invite = Invites.get(payload['invite'])[0]
     except:
@@ -108,6 +126,12 @@ def reject_invite(payload, user):
 @authenticated
 @validator(INVITE_OPERATION_PAYLOAD)
 def revoke_invite(payload, user):
+    """
+    Revokes an invite
+    args: payload, user
+    ret: response
+    """
+
     try:
         invite = Invites.get(payload['invite'])[0]
     except:

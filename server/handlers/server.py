@@ -5,6 +5,12 @@ from database import database
 
 class Server(object):
     def __init__(self, host, port):
+        """
+        Creates a Server object
+        args: self, host, port
+        ret: none
+        """
+
         print '[*] Hello there!'
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,6 +24,12 @@ class Server(object):
         self.connections = []
 
     def run(self):
+        """
+        Runs the server main loop
+        args: self
+        ret: none
+        """
+
         try:
             while True:
                 try:

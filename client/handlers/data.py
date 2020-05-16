@@ -11,19 +11,43 @@ class Data(object):
     __metaclass__ = Singleton
 
     def __init__(self):
+        """
+        Initializes a Data object
+        args: self
+        ret: none
+        """
+
         self.token = self.fetch_token()
         self.user_data = None
         self.current_group = None
         self.current_file = None
 
     def get_token(self):
+        """
+        Gets the current token
+        args: self
+        ret: token
+        """
+
         return self.token
 
     def set_token(self, token):
+        """
+        Sets the current token
+        args: self, token
+        ret: none
+        """
+
         self.token = token
         self.store_token(token)
 
     def get_current_group(self):
+        """
+        Gets the current group
+        args: self
+        ret: group
+        """
+
         if self.current_group and self.token:
             group_data_response = GroupController.get_group_data(
                 self.current_group, self.token)
@@ -34,18 +58,48 @@ class Data(object):
             return group_data_response.payload
 
     def set_current_group(self, group):
+        """
+        Sets the current group
+        args: self, group
+        ret: none
+        """
+
         self.current_group = group
 
     def get_current_file(self):
+        """
+        Gets the current file
+        args: self
+        ret: file
+        """
+
         return self.current_file
 
     def set_current_file(self, current_file):
+        """
+        Sets the current file
+        args: self, current_file
+        ret: none
+        """
+
         self.current_file = current_file
 
     def get_user_data(self):
+        """
+        Gets the current user data
+        args: self
+        ret: user_data
+        """
+
         return self.user_data
 
     def get_file_info(self, group, file_id):
+        """
+        Gets the information of a file
+        args: self, group, file_id
+        ret: file_info
+        """
+
         files = [group['files']]
         
         while files:
@@ -75,6 +129,12 @@ class Data(object):
             files = files[1:]
 
     def get_directory_info(self, group, directory_id):
+        """
+        Gets the information of a directory
+        args: self, group, file_id
+        ret: directory_info
+        """
+
         files = [group['files']]
         
         while files:
@@ -104,6 +164,12 @@ class Data(object):
             files = files[1:]
 
     def set_user_data(self):
+        """
+        Sets the current user data
+        args: none
+        ret: none
+        """
+
         if self.token:
             try:
                 user_data_response = UserController.get_user_data(self.token)
@@ -116,6 +182,12 @@ class Data(object):
                 self.token = None
 
     def fetch_token(self):
+        """
+        Fetches the token from a file
+        args: self
+        ret: token
+        """
+
         try:
             with open(TOKEN_PATH, 'r') as f:
                 return f.read().strip()
@@ -123,5 +195,11 @@ class Data(object):
             return None
 
     def store_token(self, token):
+        """
+        Stores a token into a file
+        args: self, token
+        ret: none
+        """
+
         with open(TOKEN_PATH, 'w') as f:
             f.write(token)

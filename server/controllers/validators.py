@@ -4,6 +4,12 @@ from common import Codes, Message
 from ..models import Groups, Directories, Files, Editors
 
 def is_payload_valid(payload, rules):
+    """
+    Checks if a payload is valid based on some predefined rules
+    args: payload, rules
+    ret: is_valid
+    """
+
     if type(payload) != dict:
         return False
 
@@ -25,6 +31,13 @@ def is_payload_valid(payload, rules):
     return True
 
 def validator(rules):
+    """
+    Returns a new function that returns a function that wraps another function and checks
+    that the payload to it matches the rules supplied
+    args: rules
+    ret: decorator
+    """
+
     def validation_decorator(func):
         @functools.wraps(func)
         def validation_wrapper(payload, *args, **kwargs):
@@ -41,6 +54,12 @@ def validator(rules):
     return validation_decorator
 
 def existing_group(func):
+    """
+    Returns a wrapper function that validates that the supplied group exists
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, *args, **kwargs):
         groups = Groups.get(payload['group'])
@@ -56,10 +75,22 @@ def existing_group(func):
     return wrapper
 
 def directory_exists(directory_id):
+    """
+    Checks if a directory exists
+    args: directory_id
+    ret: exists
+    """
+
     directories = Directories.get(directory_id)
     return True if directories else False
 
 def existing_directory(func):
+    """
+    Returns a wrapper function that validates that the supplied directory exists
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, *args, **kwargs):
         if not directory_exists(payload['directory']):
@@ -73,10 +104,22 @@ def existing_directory(func):
     return wrapper
 
 def file_exists(file_id):
+    """
+    Checks if a file exists
+    args: file_id
+    ret: exists
+    """
+
     files = Files.get(file_id)
     return True if files else False
 
 def existing_file(func):
+    """
+    Returns a wrapper function that validates that the supplied file exists
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, *args, **kwargs):
         if not file_exists(payload['file']):
@@ -90,6 +133,13 @@ def existing_file(func):
     return wrapper
 
 def not_existing_file(func):
+    """
+    Returns a wrapper function that validates that a file with supplied file name does
+    not exist in teh supplied directory
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, *args, **kwargs):
         files = Files.get_directory_files(payload['directory'])
@@ -105,6 +155,12 @@ def not_existing_file(func):
     return wrapper
 
 def existing_editor(func):
+    """
+    Returns a wrapper function that validates that the supplied editor exists
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, *args, **kwargs):
         editors = Editors.get(payload['editor'])

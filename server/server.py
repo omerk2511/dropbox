@@ -5,6 +5,12 @@ HOST = ''
 PORT = 8000
 
 def main():
+    """
+    The main server function
+    args: none
+    ret: none
+    """
+
     initialize_models()
 
     server = Server(HOST, PORT)

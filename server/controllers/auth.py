@@ -6,6 +6,12 @@ from ..models import Groups, UsersGroups, Directories, Files, Editors
 from ..config import JWT_SECRET_KEY
 
 def authenticated(func):
+    """
+    Returns a wrapper function that validates that the request has a valid token
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload):
         try:
@@ -22,6 +28,13 @@ def authenticated(func):
     return wrapper
 
 def group_owner(func):
+    """
+    Returns a wrapper function that validates that the current user is the owner
+    of the supplied group
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         group = Groups.get(payload['group'])[0]
@@ -38,6 +51,13 @@ def group_owner(func):
     return wrapper
 
 def group_user(func):
+    """
+    Returns a wrapper function that validates that the current user is a user
+    of the supplied group
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         if not UsersGroups.is_in_group(user['id'], payload['group']):
@@ -51,6 +71,12 @@ def group_user(func):
     return wrapper
 
 def is_directory_owner(directory_id, user_id):
+    """
+    Returns whether a user is the owner of a directory
+    args: directory_id, user_id
+    ret: is_owner
+    """
+
     directory = Directories.get(directory_id)[0]
 
     owner = directory[2]
@@ -65,6 +91,13 @@ def is_directory_owner(directory_id, user_id):
     return is_owner
 
 def directory_owner(func):
+    """
+    Returns a wrapper function that validates that the current user is the owner
+    of the supplied directory
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         if not is_directory_owner(payload['directory'], user['id']):
@@ -78,12 +111,25 @@ def directory_owner(func):
     return wrapper
 
 def is_directory_editor(directory_id, user_id):
+    """
+    Returns whether a user is an editor of a directory
+    args: directory_id, user_id
+    ret: is_owner
+    """
+
     is_editor = Editors.is_directory_editor(user_id, directory_id)
     is_editor = is_editor or is_directory_owner(directory_id, user_id)
 
     return is_editor
 
 def directory_editor(func):
+    """
+    Returns a wrapper function that validates that the current user is an editor
+    of the supplied directory
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         if not is_directory_editor(payload['directory'], user['id']):
@@ -97,6 +143,12 @@ def directory_editor(func):
     return wrapper
 
 def is_in_directory_context(directory_id, user_id):
+    """
+    Returns whether a user is in the context of a directory
+    args: directory_id, user_id
+    ret: is_owner
+    """
+
     directory = Directories.get(directory_id)[0]
 
     owner = directory[2]
@@ -112,6 +164,13 @@ def is_in_directory_context(directory_id, user_id):
     return True
 
 def in_directory_context(func):
+    """
+    Returns a wrapper function that validates that the current user is in the context
+    of the supplied directory
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         if not is_in_directory_context(payload['directory'], user['id']):
@@ -125,6 +184,12 @@ def in_directory_context(func):
     return wrapper
 
 def is_file_owner(file_id, user_id):
+    """
+    Returns whether a user is the owner of a file
+    args: file_id, user_id
+    ret: is_owner
+    """
+
     f = Files.get(file_id)[0]
     directory = Directories.get(f[4])[0]
     group_id = directory[3]
@@ -138,6 +203,13 @@ def is_file_owner(file_id, user_id):
     return file_owner
 
 def file_owner(func):
+    """
+    Returns a wrapper function that validates that the current user is the owner
+    of the supplied file
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         if not is_file_owner(payload['file'], user['id']):
@@ -151,12 +223,25 @@ def file_owner(func):
     return wrapper
 
 def is_file_editor(file_id, user_id):
+    """
+    Returns whether a user is an editor of a file
+    args: file_id, user_id
+    ret: is_owner
+    """
+
     is_editor = Editors.is_file_editor(user_id, file_id)
     is_editor = is_editor or is_file_owner(file_id, user_id)
 
     return is_editor
 
 def file_editor(func):
+    """
+    Returns a wrapper function that validates that the current user is an editor
+    of the supplied file
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         if not is_file_editor(payload['file'], user['id']):
@@ -170,6 +255,12 @@ def file_editor(func):
     return wrapper
 
 def is_in_file_context(file_id, user_id):
+    """
+    Returns whether a user is in the context of a file
+    args: file_id, user_id
+    ret: is_owner
+    """
+
     f = Files.get(file_id)[0]
     directory = Directories.get(f[4])[0]
 
@@ -186,6 +277,13 @@ def is_in_file_context(file_id, user_id):
     return True
 
 def in_file_context(func):
+    """
+    Returns a wrapper function that validates that the current user is in the context
+    of the supplied file
+    args: func
+    ret: wrapper
+    """
+
     @functools.wraps(func)
     def wrapper(payload, user, *args, **kwargs):
         if not is_in_file_context(payload['file'], user['id']):

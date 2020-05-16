@@ -17,6 +17,12 @@ CREATE_FILE_PAYLOAD = [
 @in_directory_context
 @not_existing_file
 def create_file(payload, user):
+    """
+    Creates a file
+    args: payload, user
+    ret: response
+    """
+
     file_id = Files.create(payload['name'], user['id'], payload['directory'])
     Files.write(file_id, payload['content'])
 
@@ -42,6 +48,12 @@ UPDATE_FILE_PAYLOAD = [
 @existing_file
 @file_editor
 def update_file(payload, user):
+    """
+    Updates a file
+    args: payload, user
+    ret: response
+    """
+
     if 'name' in payload:
         Files.update_name(payload['file'], payload['name'])
 
@@ -63,6 +75,12 @@ DELETE_FILE_PAYLOAD = [
 @existing_file
 @file_owner
 def delete_file(payload, user):
+    """
+    Deletes a file
+    args: payload, user
+    ret: response
+    """
+
     Files.delete(payload['file'])
 
     return Message(
@@ -80,6 +98,12 @@ GET_FILE_PAYLOAD = [
 @existing_file
 @in_file_context
 def get_file(payload, user):
+    """
+    Returns a file
+    args: payload, user
+    ret: response
+    """
+
     f = Files.get(payload['file'])[0]
     content = Files.read(payload['file'])
 

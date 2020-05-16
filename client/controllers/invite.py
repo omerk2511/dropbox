@@ -4,6 +4,12 @@ from ..handlers.connection import Connection
 class InviteController(object):
     @staticmethod
     def invite(group_id, username, token):
+        """
+        Creates an invite
+        args: group_id, username, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.INVITE,
@@ -17,6 +23,12 @@ class InviteController(object):
 
     @staticmethod
     def accept_invite(invite_id, token):
+        """
+        Accepts an invite
+        args: invite_id, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.ACCEPT_INVITE,
@@ -29,6 +41,12 @@ class InviteController(object):
 
     @staticmethod
     def reject_invite(invite_id, token):
+        """
+        Rejects an invite
+        args: invite_id, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.REJECT_INVITE,
@@ -41,6 +59,12 @@ class InviteController(object):
 
     @staticmethod
     def revoke_invite(invite_id, token):
+        """
+        Revokes an invite
+        args: invite_id, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.REVOKE_INVITE,

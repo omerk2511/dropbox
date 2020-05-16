@@ -9,6 +9,12 @@ class Connection(object):
     __metaclass__ = Singleton
 
     def __init__(self, host, port):
+        """
+        Creates a connection object
+        args: self, host, port
+        ret: none
+        """
+
         self.host = host
         self.port = port
 
@@ -22,10 +28,22 @@ class Connection(object):
         self.socket.settimeout(1)
 
     def send_recieve(self, message):
+        """
+        Sends a request and returns the response
+        args: self, message
+        ret: response
+        """
+
         self.socket.send(message.serialize())
         return Message.deserialize(self.recieve_data())
 
     def recieve_data(self):
+        """
+        Recieves data from the client (of any size)
+        args: self
+        ret: data
+        """
+
         while True:
             try:
                 data = self.socket.recv(BUFFER_SIZE)
@@ -47,6 +65,12 @@ class Connection(object):
         return data
 
     def check_connection(self, gui):
+        """
+        Checks the connection to the server
+        args: self, gui
+        ret: none
+        """
+
         has_error_ocurred = False
 
         try:

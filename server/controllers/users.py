@@ -14,6 +14,12 @@ LOG_IN_PAYLOAD = [
 @controller(Codes.LOG_IN)
 @validator(LOG_IN_PAYLOAD)
 def log_in(payload):
+    """
+    Logs a user in
+    args: payload, user
+    ret: response
+    """
+
     token = Users.log_in(**payload)
 
     if token:
@@ -39,6 +45,12 @@ CREATE_USER_PAYLOAD = [
 @controller(Codes.CREATE_USER)
 @validator(CREATE_USER_PAYLOAD)
 def create_user(payload):
+    """
+    Creates a user
+    args: payload, user
+    ret: response
+    """
+
     try:
         user_id = Users.create(**payload)
         Directories.create('/', user_id)
@@ -64,6 +76,12 @@ UPDATE_USER_PAYLOAD = [
 @authenticated
 @validator(UPDATE_USER_PAYLOAD)
 def update_user(payload, user):
+    """
+    Updates a user
+    args: payload, user
+    ret: response
+    """
+
     if 'full_name' in payload:
         Users.update_full_name(user['id'], payload['full_name'])
 
@@ -81,6 +99,12 @@ def update_user(payload, user):
 @controller(Codes.GET_USER_DATA)
 @authenticated
 def get_user_data(payload, user):
+    """
+    Retrieves the data of the current user
+    args: payload, user
+    ret: response
+    """
+
     user_data = user.copy()
 
     user_data['groups'] = [

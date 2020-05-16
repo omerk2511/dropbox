@@ -6,6 +6,12 @@ from ..handlers.connection import Connection
 class FileController(object):
     @staticmethod
     def get_file_content(file_id, token):
+        """
+        Gets a file content
+        args: file_id, token
+        ret: content
+        """
+
         response = Connection().send_recieve(
             Message(
                 Codes.GET_FILE,
@@ -23,6 +29,12 @@ class FileController(object):
 
     @staticmethod
     def create_file(name, directory, content, token):
+        """
+        Creates a file
+        args: name, directory, content, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.CREATE_FILE,
@@ -37,6 +49,12 @@ class FileController(object):
 
     @staticmethod
     def delete_file(file_id, token):
+        """
+        Deletes a file
+        args: file_id, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.DELETE_FILE,
@@ -49,6 +67,12 @@ class FileController(object):
 
     @staticmethod
     def is_file_editor(file_id, token):
+        """
+        Returns whether the current user is a file editor
+        args: file_id, token
+        ret: response
+        """
+
         try:
             return Connection().send_recieve(
                 Message(
@@ -64,6 +88,12 @@ class FileController(object):
 
     @staticmethod
     def update_file(file_id, token, name=None, content=None):
+        """
+        Updates a file
+        args: file_id, token, name, content
+        ret: response
+        """
+
         request = {
             'token': token,
             'file': file_id
@@ -84,6 +114,12 @@ class FileController(object):
 
     @staticmethod
     def get_file_editors(file_id, token):
+        """
+        Gets the editors of a file
+        args: file_id, token
+        ret: editors
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.GET_EDITORS,
@@ -96,6 +132,12 @@ class FileController(object):
 
     @staticmethod
     def add_file_editor(file_id, user, token):
+        """
+        Adds a file editor
+        args: file_id, user, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.ADD_EDITOR,
@@ -109,6 +151,12 @@ class FileController(object):
 
     @staticmethod
     def remove_file_editor(editor_id, token):
+        """
+        Removes a file editor
+        args: editor_id, token
+        ret: response
+        """
+
         return Connection().send_recieve(
             Message(
                 Codes.REMOVE_EDITOR,

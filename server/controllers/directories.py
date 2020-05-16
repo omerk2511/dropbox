@@ -14,6 +14,12 @@ CREATE_DIRECTORY_PAYLOAD = [
 @authenticated
 @validator(CREATE_DIRECTORY_PAYLOAD)
 def create_directory(payload, user):
+    """
+    Creates a directory
+    args: payload, user
+    ret: response
+    """
+
     name = payload['name']
     group = None
 
@@ -97,6 +103,12 @@ UPDATE_DIRECTORY_PAYLOAD = [
 @existing_directory
 @directory_editor
 def update_directory(payload, user):
+    """
+    Updates a directory
+    args: payload, user
+    ret: response
+    """
+
     group = Directories.get(payload['directory'])[0][3]
 
     if 'owner' in payload or 'parent' in payload:
@@ -167,6 +179,12 @@ DELETE_DIRECTORY_PAYLOAD = [
 @existing_directory
 @directory_owner
 def delete_directory(payload, user):
+    """
+    Deletes a directory
+    args: payload, user
+    ret: response
+    """
+
     directory_files = Files.get_directory_files(payload['directory'])
     sub_directories = Directories.get_sub_directories(payload['directory'])
 
